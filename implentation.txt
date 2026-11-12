@@ -1,0 +1,512 @@
+# Implementation Plan: Automata Learning Studio
+*Algorithm decision + full fix & build plan — ready for execution*
+
+---
+
+## Core Architecture Decision
+
+> **Expose ONE algorithm to the user. Internally, L\* with HITL is the engine.**
+
+### What the User Sees
+```
+[Generate DFA]  →  instant graph (RPNI warm-start)  →  "Improve Accuracy" (L* HITL)
+[Generate NFA]  →  NFA graph (NFA Learner)
+```
+
+### What Runs Internally (Hidden from User)
+```
+DFA path:
+  Step 1: Run RPNI on CSV  → first-pass DFA (shown immediately, ~80–100% accurate)
+  Step 2: L* uses RPNI result as first conjecture
+  Step 3: HITL panel asks user yes/no for uncertain strings
+  Step 4: Final minimal DFA at 100% accuracy
+
+NFA path:
+  Single step: NFA Learner on CSV → compact NFA graph
+```
+
+### What Gets Removed
+- ❌ Algorithm selector dropdown (RPNI / EDSM / L* / NFA as user choice)
+- ❌ EDSM as a separate user-visible mode
+- ❌ Orphaned `csvPreprocessor.js`
+- ❌ Hardcoded `fallbackModel()` fake graph
+- ❌ Duplicate CSV parser (unify to one)
+
+### What Gets Kept (Internally)
+- ✅ RPNI — internal warm-start before L*
+- ✅ L* — the main learning engine for DFA
+- ✅ NFA Learner — for NFA output type
+- ✅ EDSM — available internally if RPNI warm-start fails
+
+---
+
+## Phases of Execution
+
+---
+
+### Phase 1 — Critical Bug Fixes (Do First, ~2–3 hours)
+*These make the existing app actually work correctly.*
+
+#### Fix 1.1: Edge Label Rendering (`index.html`)
+**Bug:** SVG renders `{edge.label}` but backend sends `combined_label`
+```js
+// WRONG (current):
+{edge.label}
+
+// CORRECT (fix):
+{edge.combined_label || edge.symbol || edge.label}
+```
+**Where:** Line ~740 in `index.html`
+
+#### Fix 1.2: Dataset Stats `undefined` (`index.html`)
+**Bug:** `preprocessed.positiveCount` and `preprocessed.negativeCount` don't exist
+```js
+// parseCSV() returns: positiveStrings, negativeStrings (arrays)
+// UI uses: positiveCount, negativeCount (undefined)
+
+// Fix: use .length everywhere in JSX
+{preprocessed.positiveStrings.length}  // instead of positiveCount
+{preprocessed.negativeStrings.length}  // instead of negativeCount
+```
+
+#### Fix 1.3: Parallel Edge Curvature (`index.html`)
+**Bug:** A→B and B→A overlap on the same quadratic curve
+```js
+// Fix: check if reverse edge exists; if yes, flip curvature sign
+const reverseExists = graphData.edges.some(
+  e => e.source === edge.target && e.target === edge.source
+);
+const curvature = reverseExists
+  ? (edge.source < edge.target ? 40 : -40)   // flip for opposing pair
+  : 22;                                        // normal curve
+```
+
+#### Fix 1.4: Add `stepPrev` Button (`index.html`)
+```jsx
+<button onClick={stepPrev} disabled={currentStepIndex === 0}
+  className="px-3 py-1.5 bg-slate-100 ... disabled:opacity-40">
+  ⏮ Back
+</button>
+```
+
+---
+
+### Phase 2 — Graph Layout Overhaul (~3–4 hours)
+*Makes 8–10 node DFAs readable.*
+
+#### Fix 2.1: Replace Circular Layout with BFS Hierarchical Layout (`index.html`)
+```js
+function prepareGraphPositions(graph) {
+  // BFS from start state → assign layers
+  // Layer 0: start state (left side)
+  // Layer 1: states reachable in 1 step
+  // Layer k: states reachable in k steps
+  // Within each layer: evenly spaced vertically
+  // Fallback to circle if no start state
+  
+  const LAYER_WIDTH = 130;   // horizontal spacing between layers
+  const NODE_HEIGHT = 80;    // vertical spacing within a layer
+  
+  // 1. BFS to assign layers
+  // 2. Assign (x, y) based on layer × width, position in layer × height
+  // 3. Center vertically around canvas midpoint
+}
+```
+
+#### Fix 2.2: Arrow Endpoint Offset (stops arrows from hiding inside node circles)
+```js
+// Currently arrows point to node center; they overlap the circle
+// Fix: shorten path to stop at the circle boundary (radius ≈ 22px)
+function shortenPath(src, tgt, r = 22) {
+  const dx = tgt.x - src.x, dy = tgt.y - src.y;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+  return { x: tgt.x - (dx/dist)*r, y: tgt.y - (dy/dist)*r };
+}
+```
+
+#### Fix 2.3: Self-loop position varies by node (not always "top")
+```js
+// If too many self-loops point up and collide,
+// pick direction based on quadrant/position of node in graph
+```
+
+---
+
+### Phase 3 — Backend: L\* + CSV Oracle Integration (~2–3 hours)
+*Makes L\* work without a reference DFA — the accuracy unlock.*
+
+#### Fix 3.1: Modify `AutomataMLService.train_model()` in `api.py`
+
+**Current (broken for CSV):**
+```python
+if algorithm == "lstar":
+    if ref_dfa is None:
+        raise ValueError("L* active learning requires a reference oracle or preset index.")
+```
+
+**New (CSV-oracle fallback):**
+```python
+if algorithm == "lstar":
+    # Build a lookup oracle from the CSV labels
+    label_lookup = {s: True for s in positive_strings}
+    label_lookup.update({s: False for s in negative_strings})
+    
+    def csv_membership_oracle(w: str) -> bool:
+        if w in label_lookup:
+            return label_lookup[w]
+        # Unknown string: pessimistically reject
+        # (HITL session will ask user about truly uncertain ones)
+        return False
+    
+    teacher = Teacher(
+        membership_oracle=csv_membership_oracle,
+        reference_dfa=ref_dfa  # None if no preset; L* uses RPNI equiv check
+    )
+    
+    # Use RPNI result as the first conjecture (warm-start)
+    rpni_result = RPNILearner(positive_strings, negative_strings, alphabet).learn()
+    rpni_dfa = rpni_result["inferred_dfa"]
+    
+    # Equivalence oracle: compare against RPNI model, 
+    # then route discrepancies to HITL
+    def equiv_oracle(conjectured: DFA):
+        is_eq, ce = are_equivalent(conjectured, rpni_dfa)
+        return is_eq, ce
+    
+    teacher.equivalence_oracle = equiv_oracle if ref_dfa is None else None
+    learner = LStarLearner(alphabet=alphabet, teacher=teacher)
+    learner.seed_from_examples(positive_strings + negative_strings)
+    res = learner.learn()
+    # ... rest as before
+```
+
+#### Fix 3.2: New unified train endpoint strategy
+
+The `/api/model/train` endpoint now works as:
+1. Run RPNI → return immediate `first_pass_graph`  
+2. Run L\* seeded with RPNI → return `refined_graph`  
+3. If HITL needed, return `needs_hitl: true` with pending query
+
+Add `first_pass_graph` to response so UI can show the RPNI result instantly while L\* refines.
+
+#### Fix 3.3: Session isolation (`server.py` / `api.py`)
+```python
+import uuid
+
+# In server.py:
+sessions: dict = {}   # session_id → AutomataMLService instance
+
+def get_session(session_id: str) -> AutomataMLService:
+    if session_id not in sessions:
+        sessions[session_id] = AutomataMLService()
+    return sessions[session_id]
+```
+- Frontend generates a `sessionId = crypto.randomUUID()` on page load
+- Sends it in every request header or body
+- Server routes to per-session `AutomataMLService` instance
+
+---
+
+### Phase 4 — HITL Panel UI (The Big One, ~6–8 hours)
+*The core differentiator — model asks user yes/no questions.*
+
+#### New UI section: "Improve Accuracy" panel (shown after first graph is generated)
+
+**States the HITL panel can be in:**
+
+```
+[IDLE]
+  User clicks "Improve with AI Questions" button
+       ↓
+[QUERYING]  ← most of the time
+  Panel shows: "Is '1010' accepted? YES / NO"
+  Graph shows current conjecture (may change with each answer)
+  Progress: "5 questions asked so far"
+       ↓
+[CONJECTURE_READY]
+  "Here's the current model. Is it correct?"
+  [✅ Yes, It's Correct]  [❌ Provide Counterexample]
+       ↓                            ↓
+  [CONVERGED]              User types a counterexample string
+  Show final DFA           System continues querying
+  Show accuracy = 100%
+```
+
+#### Implementation in `index.html`
+
+```jsx
+// New state variables
+const [hitlMode, setHitlMode] = useState('idle');  
+// 'idle' | 'querying' | 'conjecture_ready' | 'converged'
+const [hitlQuery, setHitlQuery] = useState(null);
+// { query_string, prompt, total_queries_asked }
+const [hitlConjecture, setHitlConjecture] = useState(null);
+const [counterexampleInput, setCounterexampleInput] = useState('');
+const [hitlQueryCount, setHitlQueryCount] = useState(0);
+
+// Start HITL session
+async function startHITL() {
+  const res = await fetch('/api/active/start', {
+    method: 'POST',
+    body: JSON.stringify({
+      alphabet: preprocessed.alphabet,
+      initial_positive: preprocessed.positiveStrings,
+      initial_negative: preprocessed.negativeStrings,
+    })
+  });
+  const data = await res.json();
+  handleHITLStep(data);
+}
+
+// Route HITL response to correct UI state
+function handleHITLStep(data) {
+  if (data.status === 'NEED_MEMBERSHIP_QUERY') {
+    setHitlMode('querying');
+    setHitlQuery(data);
+  } else if (data.status === 'CONJECTURE_READY') {
+    setHitlMode('conjecture_ready');
+    setHitlConjecture(data);
+    // Update graph to show current conjecture
+    prepareGraphPositions(data.conjectured_dfa);
+    setGraphData(data.conjectured_dfa);
+  } else if (data.status === 'CONVERGED') {
+    setHitlMode('converged');
+    prepareGraphPositions(data.final_dfa);
+    setGraphData(data.final_dfa);
+  }
+}
+
+// Answer yes/no
+async function answerHITL(accepted) {
+  setHitlQueryCount(c => c + 1);
+  const res = await fetch('/api/active/answer', {
+    method: 'POST',
+    body: JSON.stringify({ is_accepted: accepted })
+  });
+  handleHITLStep(await res.json());
+}
+
+// Confirm conjecture
+async function confirmConjecture(counterexample = null) {
+  const res = await fetch('/api/active/confirm', {
+    method: 'POST',
+    body: JSON.stringify({ counterexample })
+  });
+  handleHITLStep(await res.json());
+}
+```
+
+#### HITL Panel JSX (new card, below the test string card)
+
+```jsx
+{graphData && hitlMode !== 'converged' && (
+  <div className="bg-white rounded-xl border-2 border-blue-200 p-5 shadow-sm">
+    <h2 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
+      <span className="w-5 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center">AI</span>
+      Improve Accuracy with Active Learning
+    </h2>
+
+    {hitlMode === 'idle' && (
+      <button onClick={startHITL}
+        className="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs">
+        🎯 Start AI-Assisted Refinement
+      </button>
+    )}
+
+    {hitlMode === 'querying' && hitlQuery && (
+      <div>
+        <div className="text-xs text-slate-500 mb-1">
+          Question {hitlQueryCount + 1} — Membership Query
+        </div>
+        <div className="bg-slate-900 rounded-lg p-3 font-mono text-sm text-center mb-3">
+          <span className="text-slate-400">Is </span>
+          <span className="text-yellow-300 font-bold text-lg">
+            "{hitlQuery.query_string || 'ε'}"
+          </span>
+          <span className="text-slate-400"> accepted?</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={() => answerHITL(true)}
+            className="py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs">
+            ✅ YES — Accepted
+          </button>
+          <button onClick={() => answerHITL(false)}
+            className="py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs">
+            ❌ NO — Rejected
+          </button>
+        </div>
+        <div className="mt-2 text-[11px] text-slate-400 text-center">
+          {hitlQueryCount} answers given so far
+        </div>
+      </div>
+    )}
+
+    {hitlMode === 'conjecture_ready' && (
+      <div>
+        <div className="text-xs text-emerald-700 font-semibold mb-2">
+          ✨ Model conjecture ready — does this DFA look correct?
+        </div>
+        <button onClick={() => confirmConjecture(null)}
+          className="w-full mb-2 py-2 bg-emerald-600 text-white font-bold rounded-lg text-xs">
+          ✅ Yes, This Is Correct!
+        </button>
+        <div className="text-xs text-slate-500 mb-1">Or provide a counterexample:</div>
+        <div className="flex gap-2">
+          <input value={counterexampleInput}
+            onChange={e => setCounterexampleInput(e.target.value)}
+            placeholder="e.g. 1010"
+            className="flex-1 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono"/>
+          <button onClick={() => { confirmConjecture(counterexampleInput); setCounterexampleInput(''); }}
+            className="px-3 py-1.5 bg-slate-800 text-white rounded-lg text-xs font-bold">
+            Submit
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
+{hitlMode === 'converged' && (
+  <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-4">
+    <div className="text-sm font-bold text-emerald-800 mb-1">
+      🎉 100% Minimal DFA Learned!
+    </div>
+    <div className="text-xs text-emerald-700">
+      Converged after {hitlQueryCount} questions. 
+      This is the exact minimal DFA for your language.
+    </div>
+  </div>
+)}
+```
+
+---
+
+### Phase 5 — Data Quality Warnings (~1 hour)
+*Tell the user when their CSV is too sparse.*
+
+#### In `api.py` / `preprocess_csv_content()`, add heuristic check:
+
+```python
+# After parsing:
+# Heuristic: a good dataset for an n-state DFA needs at least
+# one positive string reaching each state, plus boundary negatives.
+# Without knowing n: warn if < 15 total samples (too few for 5+ state DFAs)
+
+min_recommended = max(15, len(alphabet) * 10)
+data_quality_warning = None
+if total_valid < min_recommended:
+    data_quality_warning = (
+        f"Only {total_valid} samples found. For complex languages (5+ states), "
+        f"we recommend at least {min_recommended} samples. "
+        f"The AI will ask you clarifying questions to compensate."
+    )
+```
+
+Display this warning in the UI before showing the Generate buttons.
+
+---
+
+### Phase 6 — Cleanup & Polish (~1–2 hours)
+
+| Task | Action |
+|---|---|
+| Delete `frontend/src/utils/csvPreprocessor.js` | Dead code |
+| Remove `fallbackModel()` hardcoded graph | Replace with error message |
+| Unify CSV parser | Always call `/api/dataset/preprocess-csv` endpoint; remove client-side `parseCSV()` or keep only as offline fallback |
+| Remove algorithm parameter from generate buttons | Frontend always sends `algorithm: "lstar"` for DFA |
+| Move `run_benchmark.py` to `scripts/` | Clutter |
+| Document `server.py` vs `main.py` clearly | Pick stdlib `server.py` as default; keep FastAPI as optional |
+| Add `README` quick-start instructions | 2-command launch: `python server.py` → open browser |
+
+---
+
+## Final Flow After All Phases
+
+```
+User opens app
+  │
+  ├── Uploads CSV  (or loads preset)
+  │     └── Backend parses → shows stats + data quality warning
+  │
+  ├── Clicks "Generate DFA"
+  │     ├── Backend: RPNI warm-start → L* seeded → first-pass DFA returned
+  │     ├── Frontend: BFS layout → graph shown immediately
+  │     └── Metrics bar shows training accuracy
+  │
+  ├── [Optional] Clicks "Improve with AI Questions"
+  │     ├── HITL panel appears
+  │     ├── User answers yes/no for each uncertain string
+  │     ├── Graph updates live with each answer
+  │     └── On convergence → "100% Minimal DFA" banner
+  │
+  └── Tests strings on the final graph
+        ├── Types string → "Load String"
+        ├── Uses Play/Step/Back controls
+        └── Tape highlights + accept/reject verdict
+```
+
+---
+
+## Effort Estimate
+
+| Phase | Effort | Impact |
+|---|---|---|
+| Phase 1: Bug fixes | ~2–3 hrs | 🔴 Fixes broken visuals |
+| Phase 2: Graph layout | ~3–4 hrs | 🔴 Makes 8+ node DFAs readable |
+| Phase 3: L\* CSV oracle | ~2–3 hrs | 🔴 Core accuracy unlock |
+| Phase 4: HITL UI panel | ~6–8 hrs | 🔴 The differentiating feature |
+| Phase 5: Data warnings | ~1 hr | 🟡 UX improvement |
+| Phase 6: Cleanup | ~1–2 hrs | 🟢 Polish |
+| **Total** | **~15–20 hrs** | |
+The Algorithm Selector Question
+
+Short answer: Yes, reduce to one. Use L* with HITL.
+
+Here's the reasoning:
+
+Why Multiple Algorithms is Wrong for This Problem
+
+The problem statement says:
+
+"Develop or integrate an automata-inference algorithm" (singular) ML technique: Active learning (not passive) "Model will ask whether given string passes or not" — that's literally L*'s membership query
+
+RPNI, EDSM, and NFA Learner are all passive algorithms. They can only work with what the user gave them. They can't ask questions. They can't reach 100% on sparse data.
+
+The Benchmark Already Tells You
+Algorithm	8-node DFA from sparse CSV	Requires oracle?
+RPNI	❌ 80–89%	No
+EDSM	❌ ~89%	No
+L* (automated)	✅ 100%	Yes — needs reference DFA
+L* + HITL	✅ 100%	User is the oracle ← this is what you want
+NFA Learner	varies	No
+The Clean Architecture (One Algorithm)
+User CSV
+   │
+   ▼
+RPNI runs instantly  ──────────────────────────┐
+(warm-start, uses CSV labels as oracle)        │
+   │                                           │
+   ▼                                           ▼
+L* gets RPNI result as                  Graph shown immediately
+first conjecture                        (best passive guess)
+   │
+   ▼
+L* identifies strings it's
+uncertain about (outside CSV)
+   │
+   ▼
+HITL Panel asks user
+"Is '1010' accepted? Yes/No"
+   │
+   ▼
+L* refines model
+   │
+   ▼
+When user confirms conjecture
+→ 100% minimal DFA ✅
+
+RPNI still lives — but as an internal warm-start step, not a user choice. The user never sees "pick RPNI or EDSM." They just see "Generate DFA" → immediate graph → then optional "Improve with AI questions" mode.
+
+Does Keeping NFA make sense?
+
+Yes — but as a separate output type, not a competing algorithm. When user clicks "Generate NFA", you use the NFA Learner internally. When they click "Generate DFA", you use L*+HITL. That's a machine type selector, not an algorithm selector — which is what your UI already correctly shows

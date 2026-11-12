@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learn and Test DFA / NFA from Training Samples</title>
+
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & ReactDOM via CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel standalone for JSX parsing in browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    @keyframes pulseRing {
+      0%   { r: 24; opacity: 0.9; }
+      50%  { r: 35; opacity: 0.2; }
+      100% { r: 24; opacity: 0.9; }
+    }
+    .active-node-ring {
+      animation: pulseRing 1.5s infinite ease-in-out;
+    }
+    .node-drag {
+      cursor: grab;
+    }
+    .node-drag:active {
+      cursor: grabbing;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // ── Sample Datasets ───────────────────────────────────────────────────────
+    const SAMPLE_DATASETS = {
+      ends_with_01: {
+        name: "Ends with '01'",
+        csv: `string,label\n01,1\n101,1\n001,1\n1101,1\n0101,1\n1001,1\n0,0\n1,0\n00,0\n10,0\n11,0\n100,0\n010,0\n110,0\n111,0\n000,0\n1010,0`
+      },
+      divisible_by_3: {
+        name: "Binary Divisible by 3",
+        csv: `string,label\n0,1\n11,1\n110,1\n1001,1\n1100,1\n1111,1\n10010,1\n1,0\n10,0\n100,0\n101,0\n111,0\n1000,0\n1010,0\n1011,0\n1101,0\n1110,0`
+      },
+      even_zeros_and_ones: {
+        name: "Even 0s and Even 1s",
+        csv: `string,accepted\n"",true\n00,true\n11,true\n0011,true\n0101,true\n1001,true\n1010,true\n1100,true\n0,false\n1,false\n01,false\n10,false\n000,false\n111,false\n001,false\n011,false\n100,false\n110,false\n0001,false`
+      },
+      no_three_zeros: {
+        name: "Does Not Contain '000'",
+        csv: `string,label\n"",1\n0,1\n1,1\n00,1\n01,1\n10,1\n11,1\n100,1\n010,1\n101,1\n110,1\n000,0\n1000,0\n0001,0\n0000,0\n01000,0\n10001,0`
+      }
+    };
+
+    // ── BFS Hierarchical Layout ───────────────────────────────────────────────
+    function computeLayout(graph) {
+      if (!graph || !graph.nodes?.length) return {};
+      const startId = graph.initial_state;
+      const adj = {};
+      graph.nodes.forEach(n => { adj[n.id] = new Set(); });
+      graph.edges.forEach(e => { if (adj[e.source]) adj[e.source].add(e.target); });
+
+      const layers = {};
+      const queue = [startId];
+      layers[startId] = 0;
+      const visited = new Set([startId]);
+      while (queue.length) {
+        const curr = queue.shift();
+        for (const next of (adj[curr] || [])) {
+          if (!visited.has(next)) {
+            visited.add(next);
+            layers[next] = layers[curr] + 1;
+            queue.push(next);
+          }
+        }
+      }
+      graph.nodes.forEach(n => { if (layers[n.id] === undefined) layers[n.id] = 0; });
+
+      const byLayer = {};
+      graph.nodes.forEach(n => {
+        const l = layers[n.id];
+        if (!byLayer[l]) byLayer[l] = [];
+        byLayer[l].push(n.id);
+      });
+
+      const LAYER_W = 150, NODE_H = 100, PAD_X = 80, PAD_Y = 50;
+      const maxInLayer = Math.max(...Object.values(byLayer).map(a => a.length), 1);
+      const totalH = maxInLayer * NODE_H + PAD_Y * 2;
+
+      const positions = {};
+      Object.entries(byLayer).forEach(([layer, ids]) => {
+        const x = PAD_X + parseInt(layer) * LAYER_W;
+        ids.forEach((id, idx) => {
+          const blockH = ids.length * NODE_H;
+          const startY = (totalH - blockH) / 2 + NODE_H / 2;
+          positions[id] = { x, y: startY + idx * NODE_H };
+        });
+      });
+      return positions;
+    }
+
+    // ── App Component ─────────────────────────────────────────────────────────
+    function App() {
+      const [sessionId] = useState(() => crypto.randomUUID());
+      const [csvContent, setCsvContent] = useState(SAMPLE_DATASETS.ends_with_01.csv);
+      const [preprocessed, setPreprocessed] = useState(null);
+      const [activePreset, setActivePreset] = useState('ends_with_01');
+      const [isPreprocessing, setIsPreprocessing] = useState(false);
+      const [isGenerating, setIsGenerating] = useState(false);
+      const [graphData, setGraphData] = useState(null);
+      const [modelMetrics, setModelMetrics] = useState(null);
+      const [modelType, setModelType] = useState('dfa');
+
+      // HITL
+      const [hitlMode, setHitlMode] = useState('idle');
+      const [hitlQuery, setHitlQuery] = useState(null);
+      const [hitlQueryCount, setHitlQueryCount] = useState(0);
+      const [counterexampleInput, setCounterexampleInput] = useState('');
+
+      // Simulation
+      const [testString, setTestString] = useState('10101');
+      const [simulationTrace, setSimulationTrace] = useState(null);
+      const [currentStepIndex, setCurrentStepIndex] = useState(0);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const timerRef = useRef(null);
+
+      // Canvas
+      const [canvasScale, setCanvasScale] = useState(1);
+      const [nodePositions, setNodePositions] = useState({});
+      const [draggedNodeId, setDraggedNodeId] = useState(null);
+      const [errorMsg, setErrorMsg] = useState(null);
+
+      // ── Preprocess ──────────────────────────────────────────────────────────
+      async function preprocessCsvViaBackend(csvText) {
+        setIsPreprocessing(true);
+        setErrorMsg(null);
+        try {
+          const resp = await fetch('/api/dataset/preprocess-csv', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ csv_text: csvText })
+          });
+          const data = await resp.json();
+          setPreprocessed(data);
+        } catch (e) {
+          setErrorMsg('Backend unreachable. Please start the server: python server.py');
+        } finally {
+          setIsPreprocessing(false);
+        }
+      }
+
+      useEffect(() => { preprocessCsvViaBackend(csvContent); }, []);
+
+      // ── File Upload ─────────────────────────────────────────────────────────
+      const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const text = ev.target.result;
+          setCsvContent(text);
+          setActivePreset('custom');
+          preprocessCsvViaBackend(text);
+        };
+        reader.readAsText(file);
+      };
+
+      // ── Load Preset ─────────────────────────────────────────────────────────
+      const loadSample = (key) => {
+        setActivePreset(key);
+        const csv = SAMPLE_DATASETS[key].csv;
+        setCsvContent(csv);
+        preprocessCsvViaBackend(csv);
+      };
+
+      // ── HITL Response Handler ───────────────────────────────────────────────
+      function handleHITLResponse(data) {
+        if (data.hitl_status === 'NEED_MEMBERSHIP_QUERY') {
+          setHitlMode('querying');
+          setHitlQuery({ query_string: data.query_string, total_queries_asked: data.total_queries_asked });
+          setHitlQueryCount(data.total_queries_asked);
+        } else if (data.hitl_status === 'CONJECTURE_READY') {
+          setHitlMode('conjecture_ready');
+          setHitlQuery({ query_string: null, total_queries_asked: data.total_queries_asked });
+          setHitlQueryCount(data.total_queries_asked);
+          if (data.conjectured_graph) {
+            const pos = computeLayout(data.conjectured_graph);
+            setNodePositions(pos);
+            setGraphData(data.conjectured_graph);
+          }
+        } else if (data.hitl_status === 'CONVERGED') {
+          setHitlMode('converged');
+          setHitlQueryCount(data.total_queries_asked);
+          if (data.final_graph) {
+            const pos = computeLayout(data.final_graph);
+            setNodePositions(pos);
+            setGraphData(data.final_graph);
+          }
+        }
+      }
+
+      // ── Generate Model ──────────────────────────────────────────────────────
+      async function generateModel(type) {
+        if (!preprocessed?.is_valid) return;
+        setModelType(type);
+        setIsGenerating(true);
+        setHitlMode('idle');
+        setHitlQuery(null);
+        setHitlQueryCount(0);
+        setSimulationTrace(null);
+        setCurrentStepIndex(0);
+        setErrorMsg(null);
+
+        try {
+          const resp = await fetch('/api/model/train', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              session_id: sessionId,
+              model_type: type,
+              positive_strings: preprocessed.positive_strings,
+              negative_strings: preprocessed.negative_strings,
+              alphabet: preprocessed.alphabet
+            })
+          });
+          if (!resp.ok) {
+            const err = await resp.json();
+            setErrorMsg(err.error || 'Training failed');
+            return;
+          }
+          const data = await resp.json();
+
+          // Show first pass graph immediately
+          const firstGraph = data.first_pass_graph || data.graph;
+          const firstMetrics = data.first_pass_metrics || data.metrics;
+          const pos = computeLayout(firstGraph);
+          setNodePositions(pos);
+          setGraphData(firstGraph);
+          setModelMetrics(firstMetrics);
+
+          if (data.needs_hitl) {
+            if (data.hitl_status === 'NEED_MEMBERSHIP_QUERY') {
+              setHitlMode('querying');
+              setHitlQuery({ query_string: data.query_string, total_queries_asked: data.total_queries_asked });
+            } else if (data.hitl_status === 'CONJECTURE_READY') {
+              setHitlMode('conjecture_ready');
+              const cGraph = data.conjectured_graph;
+              if (cGraph) {
+                setNodePositions(computeLayout(cGraph));
+                setGraphData(cGraph);
+              }
+            }
+          } else {
+            setHitlMode('idle');
+          }
+        } catch (e) {
+          setErrorMsg('Backend unreachable. Please start the server: python server.py');
+        } finally {
+          setIsGenerating(false);
+        }
+      }
+
+      // ── HITL Answer ─────────────────────────────────────────────────────────
+      async function answerHITL(accepted) {
+        try {
+          const resp = await fetch('/api/hitl/answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId, is_accepted: accepted })
+          });
+          const data = await resp.json();
+          handleHITLResponse(data);
+        } catch (e) { setErrorMsg('Connection error.'); }
+      }
+
+      // ── HITL Confirm ────────────────────────────────────────────────────────
+      async function confirmConjecture(counterexample) {
+        try {
+          const resp = await fetch('/api/hitl/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId, counterexample: counterexample || null })
+          });
+          const data = await resp.json();
+          handleHITLResponse(data);
+          setCounterexampleInput('');
+        } catch (e) { setErrorMsg('Connection error.'); }
+      }
+
+      // ── Simulation ──────────────────────────────────────────────────────────
+      async function runSimulation() {
+        if (!graphData) return;
+        setIsPlaying(false);
+        if (timerRef.current) clearInterval(timerRef.current);
+        try {
+          const resp = await fetch('/api/model/simulate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId, test_string: testString })
+          });
+          if (resp.ok) {
+            const trace = await resp.json();
+            setSimulationTrace(trace);
+            setCurrentStepIndex(0);
+          } else {
+            setErrorMsg('Simulation failed. Train a model first.');
+          }
+        } catch (e) { setErrorMsg('Backend unreachable.'); }
+      }
+
+      // ── Playback Controls ───────────────────────────────────────────────────
+      function playAnimation() {
+        if (isPlaying) {
+          clearInterval(timerRef.current);
+          setIsPlaying(false);
+          return;
+        }
+        setIsPlaying(true);
+        timerRef.current = setInterval(() => {
+          setCurrentStepIndex(prev => {
+            if (simulationTrace && prev < simulationTrace.steps.length - 1) {
+              return prev + 1;
+            } else {
+              clearInterval(timerRef.current);
+              setIsPlaying(false);
+              return prev;
+            }
+          });
+        }, 800);
+      }
+
+      function stepNext() {
+        if (simulationTrace && currentStepIndex < simulationTrace.steps.length - 1)
+          setCurrentStepIndex(p => p + 1);
+      }
+
+      function stepPrev() {
+        if (currentStepIndex > 0)
+          setCurrentStepIndex(p => p - 1);
+      }
+
+      function resetSimulation() {
+        setIsPlaying(false);
+        if (timerRef.current) clearInterval(timerRef.current);
+        setCurrentStepIndex(0);
+      }
+
+      // ── Node Drag ───────────────────────────────────────────────────────────
+      const handleNodeMouseDown = (e, nodeId) => {
+        e.stopPropagation();
+        setDraggedNodeId(nodeId);
+      };
+
+      const handleCanvasMouseMove = (e) => {
+        if (!draggedNodeId) return;
+        const svg = document.getElementById('graphSvg');
+        if (!svg) return;
+        const rect = svg.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / canvasScale;
+        const y = (e.clientY - rect.top) / canvasScale;
+        setNodePositions(prev => ({ ...prev, [draggedNodeId]: { x, y } }));
+      };
+
+      const handleCanvasMouseUp = () => {
+        setDraggedNodeId(null);
+      };
+
+      // ── Derived state ───────────────────────────────────────────────────────
+      const currentStep = simulationTrace?.steps?.[currentStepIndex];
+      const activeState = currentStep?.active_states?.[0];
+      const activeEdgeId = currentStep?.traversed_edge_ids?.[0];
+      const isFinished = simulationTrace && currentStepIndex === simulationTrace.steps.length - 1;
+
+      // ── Edge Rendering Helper ───────────────────────────────────────────────
+      function renderEdge(edge) {
+        const srcPos = nodePositions[edge.source];
+        const tgtPos = nodePositions[edge.target];
+        if (!srcPos || !tgtPos) return null;
+
+        const isActive = activeEdgeId && activeEdgeId.startsWith(edge.id);
+        const stroke = isActive ? '#3B82F6' : '#64748B';
+        const strokeW = isActive ? 3.5 : 1.8;
+        const marker = isActive ? 'url(#arrow-active)' : 'url(#arrow)';
+        const textFill = isActive ? '#60A5FA' : '#CBD5E1';
+
+        let d, lx, ly;
+
+        if (edge.source === edge.target) {
+          // Self-loop — direction based on node's vertical position in canvas
+          const { x, y } = srcPos;
+          const r = 26;
+          const svgEl = document.getElementById('graphSvg');
+          const canvasH = svgEl ? svgEl.getBoundingClientRect().height / canvasScale : 500;
+          const loopDir = y < canvasH / 2 ? -1 : 1;
+          d = `M ${x - 12} ${y + loopDir*r} C ${x - 30} ${y + loopDir*(r+40)}, ${x + 30} ${y + loopDir*(r+40)}, ${x + 12} ${y + loopDir*r}`;
+          lx = x;
+          ly = y + loopDir*(r + 48);
+        } else {
+          const { x: sx, y: sy } = srcPos;
+          const { x: tx, y: ty } = tgtPos;
+          const dx = tx - sx;
+          const dy = ty - sy;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+          // Bidirectional check
+          const edgeIds = new Set(graphData.edges.map(e => e.id));
+          const reverseId = `e_${edge.target}_${edge.source}`;
+          const hasReverse = edgeIds.has(reverseId);
+          const curveDir = hasReverse ? (edge.source < edge.target ? 1 : -1) : 1;
+          const curvature = hasReverse ? 50 * curveDir : 25;
+
+          const mx = (sx + tx) / 2 - (dy / dist) * curvature;
+          const my = (sy + ty) / 2 + (dx / dist) * curvature;
+
+          // Adjust endpoint to stop at node boundary (r=22)
+          const angle = Math.atan2(ty - my, tx - mx);
+          const ex = tx - 22 * Math.cos(angle);
+          const ey = ty - 22 * Math.sin(angle);
+
+          d = `M ${sx} ${sy} Q ${mx} ${my} ${ex} ${ey}`;
+          lx = mx;
+          ly = my;
+        }
+
+        return (
+          <g key={edge.id}>
+            <path
+              d={d}
+              stroke={stroke}
+              strokeWidth={strokeW}
+              fill="none"
+              markerEnd={marker}
+            />
+            <text
+              x={lx}
+              y={ly}
+              fill={textFill}
+              fontFamily="JetBrains Mono"
+              fontSize="12"
+              fontWeight="bold"
+              textAnchor="middle"
+              alignmentBaseline="middle"
+            >
+              {edge.label}
+            </text>
+          </g>
+        );
+      }
+
+      // ── Node Rendering Helper ───────────────────────────────────────────────
+      function renderNode(node) {
+        const pos = nodePositions[node.id];
+        if (!pos) return null;
+        const { x, y } = pos;
+        const isInit = node.id === graphData.initial_state || node.data?.is_initial;
+        const isAccept = graphData.accepting_states?.includes(node.id) || node.data?.is_accepting;
+        const isActive = node.id === activeState;
+
+        return (
+          <g
+            key={node.id}
+            transform={`translate(${x}, ${y})`}
+            onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+            className="node-drag"
+          >
+            {/* Pulsing active ring */}
+            {isActive && (
+              <circle r="24" fill="none" stroke="#3B82F6" strokeWidth="3" className="active-node-ring" />
+            )}
+            {/* Double ring for accepting states */}
+            {isAccept && (
+              <circle r="28" fill="none" stroke={isActive ? '#60A5FA' : '#10B981'} strokeWidth="2" />
+            )}
+            {/* Base node circle */}
+            <circle
+              r="22"
+              fill={isActive ? '#1E3A8A' : isAccept ? '#064E3B' : '#1E293B'}
+              stroke={isActive ? '#3B82F6' : isAccept ? '#10B981' : '#94A3B8'}
+              strokeWidth="2"
+            />
+            {/* Start arrow */}
+            {isInit && (
+              <g transform="translate(-42, 0)">
+                <line x1="-10" y1="0" x2="20" y2="0" stroke="#F59E0B" strokeWidth="2" />
+                <polygon points="18,-5 30,0 18,5" fill="#F59E0B" />
+                <text x="-14" y="-8" fill="#F59E0B" fontSize="9" fontWeight="bold" textAnchor="middle">START</text>
+              </g>
+            )}
+            {/* Node label */}
+            <text
+              x="0"
+              y="4"
+              fill="#FFFFFF"
+              fontFamily="JetBrains Mono"
+              fontSize="11"
+              fontWeight="bold"
+              textAnchor="middle"
+            >
+              {node.data?.label || node.id}
+            </text>
+          </g>
+        );
+      }
+
+      // ── Render ──────────────────────────────────────────────────────────────
+      return (
+        <div className="flex-1 flex flex-col">
+          {/* HEADER */}
+          <header className="bg-white border-b border-slate-200 px-8 py-4 shadow-sm">
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
+              <div>
+                <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-mono font-bold text-sm">δ</span>
+                  Learn and Test DFA / NFA from Training Samples
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5">Automata Inference from CSV Samples with Interactive Graph Execution</p>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-mono">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="text-slate-600 font-semibold">Engine Active</span>
+              </div>
+            </div>
+          </header>
+
+          {/* Error Banner */}
+          {errorMsg && (
+            <div className="bg-rose-50 border border-rose-200 text-rose-700 px-6 py-3 text-sm flex items-center justify-between">
+              <span>{errorMsg}</span>
+              <button onClick={() => setErrorMsg(null)} className="ml-4 text-rose-500 hover:text-rose-700 font-bold text-base leading-none">✕</button>
+            </div>
+          )}
+
+          {/* MAIN 2-COLUMN LAYOUT */}
+          <main className="max-w-7xl mx-auto w-full p-6 grid grid-cols-12 gap-6 flex-1">
+
+            {/* ── LEFT COLUMN ── */}
+            <div className="col-span-12 lg:col-span-5 flex flex-col gap-5">
+
+              {/* Card 1: Dataset Input */}
+              <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide">1. Input Dataset (CSV File)</h2>
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold">Preprocessor Active</span>
+                </div>
+
+                {/* File Upload Dropzone */}
+                <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-blue-500 transition bg-slate-50 relative">
+                  <input
+                    type="file"
+                    accept=".csv,text/csv"
+                    onChange={handleFileUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                  />
+                  <div className="text-slate-600 text-xs font-medium">
+                    <span className="text-blue-600 font-bold">Click to Upload CSV</span> or drag and drop
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-1">Accepts columns: <code>string, label</code> (1/0, true/false)</div>
+                </div>
+
+                {/* Preset Buttons */}
+                <div className="mt-4">
+                  <div className="text-xs font-semibold text-slate-500 mb-2">Or load sample CSV preset:</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Object.keys(SAMPLE_DATASETS).map(key => (
+                      <button
+                        key={key}
+                        onClick={() => loadSample(key)}
+                        className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition ${
+                          activePreset === key
+                            ? 'bg-blue-600 text-white border-blue-600 font-bold shadow-sm'
+                            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
+                        }`}
+                      >
+                        {SAMPLE_DATASETS[key].name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Parsing indicator */}
+                {isPreprocessing && (
+                  <div className="mt-4 text-xs text-slate-500 flex items-center gap-2">
+                    <span className="animate-spin inline-block w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full"></span>
+                    Parsing CSV...
+                  </div>
+                )}
+
+                {/* Dataset Summary */}
+                {preprocessed?.is_valid && (
+                  <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
+                      <span className="text-emerald-700 flex items-center gap-1">✓ Dataset Validated</span>
+                      <span className="font-mono text-slate-500">{preprocessed.total_samples} total rows</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono">
+                      <div className="bg-white p-2 rounded-lg border border-slate-200">
+                        <div className="text-slate-400 text-[10px]">Positives</div>
+                        <div className="text-emerald-600 font-bold text-sm">{preprocessed.positive_count}</div>
+                      </div>
+                      <div className="bg-white p-2 rounded-lg border border-slate-200">
+                        <div className="text-slate-400 text-[10px]">Negatives</div>
+                        <div className="text-rose-600 font-bold text-sm">{preprocessed.negative_count}</div>
+                      </div>
+                      <div className="bg-white p-2 rounded-lg border border-slate-200">
+                        <div className="text-slate-400 text-[10px]">Alphabet (Σ)</div>
+                        <div className="text-blue-600 font-bold text-sm">{`{${preprocessed.alphabet.join(', ')}}`}</div>
+                      </div>
+                    </div>
+
+                    {/* Positive samples preview chips */}
+                    <div className="mt-3 text-[11px] font-mono">
+                      <div className="text-slate-500 mb-1">Positives preview:</div>
+                      <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
+                        {preprocessed.positive_strings.slice(0, 10).map((s, i) => (
+                          <span key={i} className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            {s === '' ? 'ε' : s}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Data quality warning */}
+                    {preprocessed.data_quality_warning && (
+                      <div className="mt-3 p-2 bg-yellow-50 border border-yellow-300 rounded-lg text-[11px] text-yellow-800">
+                        ⚠️ {preprocessed.data_quality_warning}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Invalid dataset error */}
+                {preprocessed && !preprocessed.is_valid && (
+                  <div className="mt-3 p-3 bg-rose-50 rounded-xl border border-rose-200 text-xs text-rose-700">
+                    <strong>Invalid Data:</strong> {preprocessed.error}
+                  </div>
+                )}
+
+                {/* Generate Buttons */}
+                <div className="mt-5 pt-4 border-t border-slate-200">
+                  <div className="text-xs font-semibold text-slate-700 mb-2">2. Choose Machine Type:</div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => generateModel('dfa')}
+                      disabled={!preprocessed?.is_valid || isGenerating}
+                      className="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition disabled:opacity-50"
+                    >
+                      {isGenerating && modelType === 'dfa' ? (
+                        <><span className="animate-spin inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span> Learning...</>
+                      ) : 'Generate DFA'}
+                    </button>
+                    <button
+                      onClick={() => generateModel('nfa')}
+                      disabled={!preprocessed?.is_valid || isGenerating}
+                      className="py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition disabled:opacity-50"
+                    >
+                      {isGenerating && modelType === 'nfa' ? (
+                        <><span className="animate-spin inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span> Learning...</>
+                      ) : 'Generate NFA'}
+                    </button>
+                  </div>
+                  <div className="text-xs text-slate-500 mt-2">DFA uses L* active learning • NFA uses state-merging</div>
+                </div>
+              </div>
+
+              {/* Card 2: HITL Panel */}
+              {graphData && (
+                <div className="bg-white rounded-xl border-2 border-blue-200 p-5 shadow-sm">
+                  <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide mb-3 flex items-center gap-2">
+                    🤖 Active Learning Refinement
+                  </h2>
+
+                  {(hitlMode === 'querying' || hitlMode === 'conjecture_ready') && modelMetrics && (
+                    <div className="text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-lg p-2 mb-3">
+                      📊 Initial estimate: <strong>{(modelMetrics.accuracy * 100).toFixed(1)}% accuracy</strong>. Answer questions to refine toward 100%.
+                    </div>
+                  )}
+
+                  {hitlMode === 'idle' && modelType === 'dfa' && (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-3">The DFA was inferred from your CSV. Click below to have the AI ask you targeted yes/no questions to reach 100% accuracy.</p>
+                      <button
+                        onClick={() => { generateModel('dfa'); }}
+                        className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition"
+                      >
+                        🎯 Start AI-Assisted Refinement
+                      </button>
+                    </div>
+                  )}
+
+                  {hitlMode === 'idle' && modelType === 'nfa' && (
+                    <p className="text-xs text-slate-500">NFA learning is passive — no active queries needed.</p>
+                  )}
+
+                  {hitlMode === 'querying' && hitlQuery && (
+                    <div>
+                      <div className="text-xs text-slate-500 mb-2">Membership Query #{hitlQueryCount + 1}</div>
+                      <div className="bg-slate-900 rounded-xl p-4 text-center mb-4">
+                        <div className="text-slate-400 text-xs mb-1">Is this string ACCEPTED?</div>
+                        <div className="text-yellow-300 font-mono font-bold text-2xl">
+                          {hitlQuery.query_string === '' ? 'ε (empty string)' : `"${hitlQuery.query_string}"`}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button onClick={() => answerHITL(true)} className="py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition">✅ YES — Accepted</button>
+                        <button onClick={() => answerHITL(false)} className="py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-sm transition">❌ NO — Rejected</button>
+                      </div>
+                      <div className="text-[11px] text-slate-400 text-center mt-1">
+                        Σ = {'{' + (preprocessed?.alphabet?.join(', ') || '0, 1') + '}'}
+                      </div>
+                      <div className="text-center text-xs text-slate-400 mt-1">{hitlQueryCount} answers given</div>
+                    </div>
+                  )}
+
+                  {hitlMode === 'conjecture_ready' && (
+                    <div>
+                      <div className="text-emerald-700 font-semibold text-sm mb-2">✨ Conjecture Ready — {hitlQueryCount} questions asked</div>
+                      <p className="text-xs text-slate-500 mb-3">The graph shows the current hypothesized DFA. Is it correct?</p>
+                      <button
+                        onClick={() => confirmConjecture(null)}
+                        className="w-full mb-2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition"
+                      >
+                        ✅ Yes, This DFA is Correct!
+                      </button>
+                      <div className="text-xs text-slate-500 mb-1">Or provide a counterexample string it gets wrong:</div>
+                      <div className="flex gap-2">
+                        <input
+                          value={counterexampleInput}
+                          onChange={e => setCounterexampleInput(e.target.value)}
+                          placeholder="e.g. 1010..."
+                          className="flex-1 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-blue-500"
+                        />
+                        <button
+                          onClick={() => confirmConjecture(counterexampleInput)}
+                          disabled={!counterexampleInput}
+                          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold disabled:opacity-40 transition"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {hitlMode === 'converged' && (
+                    <div className="bg-emerald-50 border border-emerald-300 rounded-xl p-4 text-center">
+                      <div className="text-lg font-bold text-emerald-800">🎉 100% Minimal DFA!</div>
+                      <div className="text-xs text-emerald-700 mt-1">Converged after {hitlQueryCount} questions. Exact minimal DFA learned.</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Card 3: String Tester */}
+              {graphData && (
+                <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                  <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide mb-3 flex items-center justify-between">
+                    <span>3. Test String on Graph</span>
+                    {preprocessed?.alphabet && (
+                      <span className="text-[11px] font-mono text-slate-500 font-normal">
+                        Alphabet: {preprocessed.alphabet.join(', ')}
+                      </span>
+                    )}
+                  </h2>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={testString}
+                      onChange={e => setTestString(e.target.value.trim())}
+                      placeholder="Enter string (e.g. 10101)..."
+                      onKeyDown={e => e.key === 'Enter' && runSimulation()}
+                      className="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-800 focus:outline-none focus:border-blue-500"
+                    />
+                    <button
+                      onClick={runSimulation}
+                      className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg shadow-sm transition"
+                    >
+                      Test String
+                    </button>
+                  </div>
+
+                  {simulationTrace && (
+                    <div className="mt-4 pt-3 border-t border-slate-200">
+                      {/* Playback Controls */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={playAnimation}
+                            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition"
+                          >
+                            {isPlaying ? 'Pause ⏸' : 'Play ▶'}
+                          </button>
+                          <button
+                            onClick={stepPrev}
+                            disabled={currentStepIndex <= 0}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold disabled:opacity-40 transition"
+                          >
+                            ⏮ Back
+                          </button>
+                          <button
+                            onClick={stepNext}
+                            disabled={currentStepIndex >= simulationTrace.steps.length - 1}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold disabled:opacity-40 transition"
+                          >
+                            Next ⏭
+                          </button>
+                          <button
+                            onClick={resetSimulation}
+                            className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition"
+                          >
+                            Reset
+                          </button>
+                        </div>
+                        <span className="text-xs font-mono font-semibold text-slate-600">
+                          Step {currentStepIndex} of {simulationTrace.steps.length - 1}
+                        </span>
+                      </div>
+
+                      {/* Tape Visualization */}
+                      <div className="bg-slate-100 rounded-lg p-2.5 border border-slate-200 flex items-center justify-center gap-1 font-mono text-base font-bold flex-wrap">
+                        {(simulationTrace.input_string || testString).split('').map((char, idx) => {
+                          const isConsumed = idx < currentStepIndex - 1;
+                          const isCurrent = idx === currentStepIndex - 1;
+                          return (
+                            <span
+                              key={idx}
+                              className={`w-7 h-8 rounded flex items-center justify-center transition-all ${
+                                isCurrent
+                                  ? 'bg-blue-600 text-white scale-110 shadow-md ring-2 ring-blue-300'
+                                  : isConsumed
+                                  ? 'bg-slate-300 text-slate-500'
+                                  : 'bg-white text-slate-800 border border-slate-300'
+                              }`}
+                            >
+                              {char}
+                            </span>
+                          );
+                        })}
+                        {(simulationTrace.input_string || testString) === '' && (
+                          <span className="text-slate-400 text-xs">ε (empty string)</span>
+                        )}
+                      </div>
+
+                      {/* Current State Log */}
+                      <div className="mt-3 p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-xs font-mono text-slate-700">
+                        {currentStepIndex === 0 ? (
+                          <span>► Started at Initial State <strong>{graphData.initial_state}</strong>.</span>
+                        ) : (
+                          <span>
+                            Read symbol <strong>'{currentStep?.consumed_symbol}'</strong> ──► Active State: <strong className="text-blue-700">{activeState || 'Dead State'}</strong>
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Verdict Banner */}
+                      {isFinished && (
+                        <div className={`mt-3 p-3 rounded-xl border text-center font-bold text-xs ${
+                          simulationTrace.accepted
+                            ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                            : 'bg-rose-50 border-rose-300 text-rose-800'
+                        }`}>
+                          {simulationTrace.accepted ? (
+                            <div>
+                              <div className="text-sm">ACCEPTED ✅</div>
+                              <div className="text-[11px] font-normal mt-0.5">Finished in accepting state <strong>{activeState}</strong>. String belongs to the language.</div>
+                            </div>
+                          ) : (
+                            <div>
+                              <div className="text-sm">REJECTED ❌</div>
+                              <div className="text-[11px] font-normal mt-0.5">Finished in non-accepting state <strong>{activeState || 'None'}</strong>.</div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* ── RIGHT COLUMN ── */}
+            <div className="col-span-12 lg:col-span-7 flex flex-col gap-4">
+              <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex-1 flex flex-col">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
+                      {graphData ? `${graphData.automaton_type} — ${graphData.nodes?.length} States` : 'Automata Graph'}
+                    </h2>
+                    {hitlMode === 'converged' && (
+                      <span className="text-xs text-emerald-600 font-bold">✅ 100% Exact Minimal DFA</span>
+                    )}
+                    {graphData && hitlMode !== 'converged' && (
+                      <span className="text-xs text-slate-500">
+                        {graphData.nodes?.length} States | {graphData.edges?.length} Transitions
+                      </span>
+                    )}
+                  </div>
+                  {graphData && (
+                    <div className="flex items-center gap-1.5 text-xs font-mono">
+                      <button onClick={() => setCanvasScale(s => Math.min(2, s + 0.15))} className="px-2 py-1 bg-slate-100 rounded hover:bg-slate-200 transition">Zoom +</button>
+                      <button onClick={() => setCanvasScale(s => Math.max(0.4, s - 0.15))} className="px-2 py-1 bg-slate-100 rounded hover:bg-slate-200 transition">Zoom -</button>
+                      <button onClick={() => setCanvasScale(1)} className="px-2 py-1 bg-slate-100 rounded hover:bg-slate-200 transition">Reset</button>
+                      <button onClick={() => { const svg = document.getElementById('graphSvg'); if (!svg) return; const d = new XMLSerializer().serializeToString(svg); const b = new Blob([d], {type: 'image/svg+xml'}); const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = 'automaton.svg'; a.click(); URL.revokeObjectURL(u); }} className="px-2 py-1 bg-slate-100 rounded hover:bg-slate-200 transition">⬇ SVG</button>
+                    </div>
+                  )}
+                </div>
+
+                {/* SVG Canvas */}
+                <div className="flex-1 w-full bg-slate-900 rounded-xl min-h-[480px] relative overflow-hidden select-none">
+                  {graphData ? (
+                    <svg
+                      id="graphSvg"
+                      className="w-full h-full"
+                      onMouseMove={handleCanvasMouseMove}
+                      onMouseUp={handleCanvasMouseUp}
+                      onMouseLeave={handleCanvasMouseUp}
+                    >
+                      <defs>
+                        <marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                          <polygon points="0 1, 8 4, 0 7" fill="#94A3B8" />
+                        </marker>
+                        <marker id="arrow-active" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                          <polygon points="0 1, 8 4, 0 7" fill="#3B82F6" />
+                        </marker>
+                      </defs>
+                      <g transform={`scale(${canvasScale})`}>
+                        {/* Edges first (behind nodes) */}
+                        {graphData.edges.map(edge => renderEdge(edge))}
+                        {/* Nodes on top */}
+                        {graphData.nodes.map(node => renderNode(node))}
+                      </g>
+                    </svg>
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-slate-500">
+                      <div className="font-mono text-4xl mb-3">◎</div>
+                      <p className="text-sm font-medium">No Automaton Yet</p>
+                      <p className="text-xs mt-1">Upload CSV and click Generate</p>
+                    </div>
+                  )}
+
+                  {/* Canvas Legend */}
+                  {graphData && (
+                    <div className="absolute bottom-3 left-3 bg-slate-800/90 border border-slate-700 rounded-lg p-2 text-[11px] font-mono flex items-center gap-4 text-slate-300">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full border border-slate-400 bg-slate-700 inline-block"></span>
+                        <span>State</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3.5 h-3.5 rounded-full border-2 border-emerald-400 bg-emerald-950 inline-block"></span>
+                        <span>Accepting</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full border-2 border-blue-400 bg-blue-900 inline-block"></span>
+                        <span>Active</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-yellow-400">▶</span>
+                        <span>Start</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Metrics Bar */}
+                {modelMetrics && (
+                  <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs font-mono flex-wrap gap-2">
+                    <span className="text-slate-600">States: <strong className="text-slate-800">{graphData?.nodes?.length ?? '—'}</strong></span>
+                    <span className="text-slate-600">Accuracy: <strong className="text-emerald-600 font-bold">{(modelMetrics.accuracy * 100).toFixed(1)}%</strong></span>
+                    <span className="text-slate-600">Precision: <strong className="text-slate-800">{(modelMetrics.precision ?? 0).toFixed(3)}</strong></span>
+                    <span className="text-slate-600">Recall: <strong className="text-slate-800">{(modelMetrics.recall ?? 0).toFixed(3)}</strong></span>
+                    <span className="text-slate-600">F1: <strong className="text-blue-600 font-bold">{(modelMetrics.f1_score ?? 0).toFixed(3)}</strong></span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </main>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
