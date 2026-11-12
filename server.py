@@ -120,6 +120,13 @@ class AutomataRequestHandler(BaseHTTPRequestHandler):
                 self._set_headers(200)
                 self.wfile.write(json.dumps(res).encode("utf-8"))
 
+            elif path == "/api/hitl/skip":
+                res = service.skip_hitl(
+                    session_id=body.get("session_id", ""),
+                )
+                self._set_headers(200)
+                self.wfile.write(json.dumps(res).encode("utf-8"))
+
             elif path == "/api/hitl/confirm":
                 res = service.confirm_hitl_conjecture(
                     session_id=body.get("session_id", ""),

@@ -214,8 +214,13 @@
         }
         if (data.hitl_status === 'NEED_MEMBERSHIP_QUERY') {
           setHitlMode('querying');
-          setHitlQuery({ query_string: data.query_string, total_queries_asked: data.total_queries_asked });
-          setHitlQueryCount(data.total_queries_asked);
+          setHitlQuery({
+            query_string: data.query_string,
+            query_index: data.query_index,
+            total_queries: data.total_queries,
+            total_queries_asked: data.total_queries_asked
+          });
+          setHitlQueryCount(data.total_queries_asked || 0);
         } else if (data.hitl_status === 'CONJECTURE_READY') {
           setHitlMode('conjecture_ready');
           setHitlQuery({ query_string: null, total_queries_asked: data.total_queries_asked });
@@ -227,11 +232,12 @@
           }
         } else if (data.hitl_status === 'CONVERGED') {
           setHitlMode('converged');
-          setHitlQueryCount(data.total_queries_asked);
-          if (data.final_graph) {
-            const pos = computeLayout(data.final_graph);
+          setHitlQueryCount(data.total_queries_asked || 0);
+          const fGraph = data.final_graph || data.graph;
+          if (fGraph) {
+            const pos = computeLayout(fGraph);
             setNodePositions(pos);
-            setGraphData(data.final_graph);
+            setGraphData(fGraph);
           }
         }
       }
@@ -282,7 +288,13 @@
           if (data.needs_hitl) {
             if (data.hitl_status === 'NEED_MEMBERSHIP_QUERY') {
               setHitlMode('querying');
-              setHitlQuery({ query_string: data.query_string, total_queries_asked: data.total_queries_asked });
+              setHitlQuery({
+                query_string: data.query_string,
+                query_index: data.query_index,
+                total_queries: data.total_queries,
+                total_queries_asked: data.total_queries_asked
+              });
+              setHitlQueryCount(0);
             } else if (data.hitl_status === 'CONJECTURE_READY') {
               setHitlMode('conjecture_ready');
               const cGraph = data.conjectured_graph;
@@ -292,7 +304,7 @@
               }
             }
           } else {
-            setHitlMode('idle');
+            setHitlMode('converged');
           }
         } catch (e) {
           setErrorMsg('Backend unreachable. Please start the server: python server.py');
@@ -308,6 +320,19 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ session_id: sessionId, is_accepted: accepted })
+          });
+          const data = await resp.json();
+          handleHITLResponse(data);
+        } catch (e) { setErrorMsg('Connection error.'); }
+      }
+
+      // ── HITL Skip ───────────────────────────────────────────────────────────
+      async function skipHITL() {
+        try {
+          const resp = await fetch('/api/hitl/skip', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId })
           });
           const data = await resp.json();
           handleHITLResponse(data);
@@ -742,21 +767,35 @@
 
                   {hitlMode === 'querying' && hitlQuery && (
                     <div>
-                      <div className="text-xs text-slate-500 mb-2">Membership Query #{hitlQueryCount + 1}</div>
-                      <div className="bg-slate-900 rounded-xl p-4 text-center mb-4">
-                        <div className="text-slate-400 text-xs mb-1">Is this string ACCEPTED?</div>
-                        <div className="text-yellow-300 font-mono font-bold text-2xl">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-semibold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
+                          🔍 Disambiguation: Question {hitlQuery.query_index || (hitlQueryCount + 1)} of {hitlQuery.total_queries || 4}
+                        </span>
+                        <button
+                          onClick={skipHITL}
+                          className="text-[11px] text-slate-500 hover:text-slate-800 font-semibold underline"
+                          title="Finalize model immediately with current data"
+                        >
+                          ⚡ Skip & Generate Now
+                        </button>
+                      </div>
+                      <div className="bg-slate-900 rounded-xl p-4 text-center mb-3 shadow-inner">
+                        <div className="text-slate-400 text-xs mb-1">Is this string ACCEPTED in your target language?</div>
+                        <div className="text-yellow-300 font-mono font-bold text-2xl tracking-wide">
                           {hitlQuery.query_string === '' ? 'ε (empty string)' : `"${hitlQuery.query_string}"`}
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => answerHITL(true)} className="py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition">✅ YES — Accepted</button>
-                        <button onClick={() => answerHITL(false)} className="py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-sm transition">❌ NO — Rejected</button>
+                      <div className="grid grid-cols-2 gap-3 mb-2">
+                        <button onClick={() => answerHITL(true)} className="py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-sm">
+                          ✅ YES — Accepted
+                        </button>
+                        <button onClick={() => answerHITL(false)} className="py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition shadow-sm">
+                          ❌ NO — Rejected
+                        </button>
                       </div>
-                      <div className="text-[11px] text-slate-400 text-center mt-1">
-                        Σ = {'{' + (preprocessed?.alphabet?.join(', ') || '0, 1') + '}'}
+                      <div className="text-[11px] text-slate-400 text-center">
+                        Σ = {'{' + (preprocessed?.alphabet?.join(', ') || '0, 1') + '}'} • Hard cap: at most 4 questions asked
                       </div>
-                      <div className="text-center text-xs text-slate-400 mt-1">{hitlQueryCount} answers given</div>
                     </div>
                   )}
 

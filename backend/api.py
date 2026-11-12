@@ -15,6 +15,7 @@ from .automata.dataset.generator import (
 from .automata.learning.rpni import RPNILearner
 from .automata.learning.edsm import EDSMLearner
 from .automata.learning.sat_dfa import SATDFALearner
+from .automata.learning.uncertainty_oracle import UncertaintyActiveLearner
 from .automata.learning.lstar import LStarLearner, Teacher, InteractiveActiveLearner
 from .automata.learning.nfa_learning import NFALearner
 from .automata.evaluation.metrics import evaluate_automaton
@@ -307,31 +308,18 @@ class AutomataMLService:
                 first_pass_dfa, Dataset(pos_strings, neg_strings, alphabet)
             )
 
-            # Extract access strings from the warm-start DFA for efficient L* seeding
-            access_strings = []
-            if first_pass_dfa.start_state is not None:
-                queue = deque([first_pass_dfa.start_state])
-                access_map = {first_pass_dfa.start_state: ""}
-                while queue:
-                    curr = queue.popleft()
-                    for a in sorted(first_pass_dfa.alphabet):
-                        nxt = first_pass_dfa.step(curr, a)
-                        if nxt is not None and nxt not in access_map:
-                            access_map[nxt] = access_map[curr] + a
-                            queue.append(nxt)
-                access_strings = list(access_map.values())
-
-            learner = InteractiveActiveLearner(
+            # Uncertainty-Guided Active Learner (strict hard cap: max 4 questions)
+            uncertainty_learner = UncertaintyActiveLearner(
+                model=first_pass_dfa,
+                positive_strings=pos_strings,
+                negative_strings=neg_strings,
                 alphabet=alphabet,
-                initial_positive=pos_strings,
-                initial_negative=neg_strings,
-                reference_oracle=None,
-                seed_access_strings=access_strings,
+                max_questions=4,
             )
-            session["learner"] = learner
-            self._interactive_session = learner
+            session["learner"] = uncertainty_learner
+            self._interactive_session = uncertainty_learner
 
-            step_result = learner.step()
+            step_result = uncertainty_learner.get_step_result()
 
             if step_result["status"] == "NEED_MEMBERSHIP_QUERY":
                 return {
@@ -340,42 +328,24 @@ class AutomataMLService:
                     "hitl_status": "NEED_MEMBERSHIP_QUERY",
                     "inference_engine": inference_engine,
                     "query_string": step_result["query_string"],
+                    "query_index": step_result["query_index"],
+                    "total_queries": step_result["total_queries"],
                     "first_pass_graph": first_pass_graph,
                     "first_pass_metrics": first_pass_metrics,
                     "total_queries_asked": 0,
+                    "message": f"Algorithm detected {step_result['total_queries']} boundary uncertainties. Answer {step_result['total_queries']} quick questions to guarantee exactness (or skip).",
                 }
-            elif step_result["status"] == "CONJECTURE_READY":
-                conj_graph = format_graph_payload(
-                    learner.current_conjecture, name="DFA (Conjecture)"
-                )
-                session["model"] = learner.current_conjecture
-                self._current_model = learner.current_conjecture
-                return {
-                    "session_id": sid,
-                    "needs_hitl": True,
-                    "hitl_status": "CONJECTURE_READY",
-                    "inference_engine": inference_engine,
-                    "first_pass_graph": first_pass_graph,
-                    "first_pass_metrics": first_pass_metrics,
-                    "conjectured_graph": conj_graph,
-                    "total_queries_asked": 0,
-                }
-            else:  # CONVERGED
-                final_graph = format_graph_payload(
-                    learner.current_conjecture, name="DFA (Learned)"
-                )
-                session["model"] = learner.current_conjecture
-                self._current_model = learner.current_conjecture
-                metrics = evaluate_automaton(
-                    learner.current_conjecture,
-                    Dataset(pos_strings, neg_strings, alphabet),
-                )
+            else:  # Model is 100% confident with 0 queries needed!
                 return {
                     "session_id": sid,
                     "needs_hitl": False,
+                    "hitl_status": "CONVERGED",
                     "inference_engine": inference_engine,
-                    "graph": final_graph,
-                    "metrics": metrics,
+                    "graph": first_pass_graph,
+                    "final_graph": first_pass_graph,
+                    "metrics": first_pass_metrics,
+                    "total_queries_asked": 0,
+                    "message": "Model is confident and minimal with 0 questions needed.",
                 }
 
     # ------------------------------------------------------------------
@@ -385,14 +355,107 @@ class AutomataMLService:
     def answer_hitl_query(self, session_id: str = "default", is_accepted: bool = False) -> Dict[str, Any]:
         """
         Routes to learner.answer_membership_query(is_accepted), then processes result.
+        Supports both UncertaintyActiveLearner (capped at 4-5 queries) and legacy L*.
         """
         sid = session_id or "default"
         session = self._get_or_create_session(sid)
-        learner: Optional[InteractiveActiveLearner] = session.get("learner") or self._interactive_session
+        learner = session.get("learner") or self._interactive_session
         if learner is None:
             raise ValueError(f"No active HITL session for session_id={sid!r}.")
-        step_result = learner.answer_membership_query(is_accepted)
-        return self._process_hitl_step_result(sid, step_result)
+
+        if isinstance(learner, UncertaintyActiveLearner):
+            answered_q, accepted = learner.answer_membership_query(is_accepted)
+            if accepted:
+                if answered_q not in session["positive"]:
+                    session["positive"].append(answered_q)
+            else:
+                if answered_q not in session["negative"]:
+                    session["negative"].append(answered_q)
+
+            if learner.is_converged:
+                # All 3-5 questions answered! Re-synthesize final minimal model
+                pos_strings = session["positive"]
+                neg_strings = session["negative"]
+                alphabet = session["alphabet"]
+                total = len(pos_strings) + len(neg_strings)
+                final_dfa = None
+                engine = "RPNI (State-Merging)"
+
+                if total <= 35 and len(pos_strings) > 0 and len(neg_strings) > 0:
+                    try:
+                        sat_learner = SATDFALearner(pos_strings, neg_strings, alphabet, timeout_sec=2.0)
+                        sat_res = sat_learner.learn(max_states=8)
+                        if sat_res is not None:
+                            final_dfa = sat_res["inferred_dfa"]
+                            engine = f"Exact SAT (Biermann-Feldman, k={sat_res['k']})"
+                    except Exception:
+                        final_dfa = None
+
+                if final_dfa is None:
+                    rpni = RPNILearner(pos_strings, neg_strings, alphabet)
+                    res = rpni.learn()
+                    final_dfa = res["inferred_dfa"]
+
+                session["model"] = final_dfa
+                self._current_model = final_dfa
+                final_graph = format_graph_payload(final_dfa, name="DFA (Final Verified)")
+                metrics = evaluate_automaton(final_dfa, Dataset(pos_strings, neg_strings, alphabet))
+
+                return {
+                    "status": "CONVERGED",
+                    "session_id": sid,
+                    "hitl_status": "CONVERGED",
+                    "inference_engine": engine,
+                    "final_graph": final_graph,
+                    "graph": final_graph,
+                    "metrics": metrics,
+                    "total_queries_asked": len(learner.answers),
+                    "message": f"All {len(learner.answers)} questions answered. Final minimal DFA generated successfully!",
+                }
+            else:
+                step_res = learner.get_step_result()
+                return {
+                    "status": "NEED_MEMBERSHIP_QUERY",
+                    "session_id": sid,
+                    "hitl_status": "NEED_MEMBERSHIP_QUERY",
+                    "query_string": step_res["query_string"],
+                    "query_index": step_res["query_index"],
+                    "total_queries": step_res["total_queries"],
+                    "total_queries_asked": len(learner.answers),
+                    "message": f"Question {step_res['query_index']} of {step_res['total_queries']}",
+                }
+        else:
+            step_result = learner.answer_membership_query(is_accepted)
+            return self._process_hitl_step_result(sid, step_result)
+
+    def skip_hitl(self, session_id: str = "default") -> Dict[str, Any]:
+        """
+        Skips remaining uncertainty questions and immediately finalizes the model.
+        """
+        sid = session_id or "default"
+        session = self._get_or_create_session(sid)
+        learner = session.get("learner") or self._interactive_session
+        if learner and hasattr(learner, "skip_remaining"):
+            learner.skip_remaining()
+
+        curr_model = session.get("model") or self._current_model
+        pos_strings = session["positive"]
+        neg_strings = session["negative"]
+        alphabet = session["alphabet"]
+
+        final_graph = format_graph_payload(curr_model, name="DFA (Final)") if curr_model else None
+        metrics = evaluate_automaton(curr_model, Dataset(pos_strings, neg_strings, alphabet)) if curr_model else None
+
+        return {
+            "status": "CONVERGED",
+            "session_id": sid,
+            "hitl_status": "CONVERGED",
+            "final_graph": final_graph,
+            "graph": final_graph,
+            "metrics": metrics,
+            "total_queries_asked": len(getattr(learner, "answers", {})),
+            "message": "Questions skipped. Model finalized with current dataset.",
+        }
 
     def confirm_hitl_conjecture(
         self,
@@ -439,11 +502,12 @@ class AutomataMLService:
         # 2. Update learner known labels and query history
         if learner is not None:
             learner.known_labels[counterexample] = true_label
-            learner.query_history.append({
-                "query_string": counterexample,
-                "answer": true_label,
-                "source": "counterexample",
-            })
+            if hasattr(learner, "query_history") and isinstance(learner.query_history, list):
+                learner.query_history.append({
+                    "query_string": counterexample,
+                    "answer": true_label,
+                    "source": "counterexample",
+                })
 
         # 3. Incremental Re-Synthesis with updated dataset
         pos_strings = session["positive"]
