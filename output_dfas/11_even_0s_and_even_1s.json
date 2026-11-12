@@ -1,0 +1,79 @@
+{
+  "question_number": 11,
+  "level": "Level 3 \u2013 Moderate",
+  "title": "Even number of 0s and even number of 1s",
+  "slug": "11_even_0s_and_even_1s",
+  "description": "Accepts strings over {0, 1} with both an even count of 0s and an even count of 1s.",
+  "formal_definition": {
+    "states": [
+      "q_ee",
+      "q_oe",
+      "q_eo",
+      "q_oo"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q_ee",
+    "accept_states": [
+      "q_ee"
+    ],
+    "transitions": {
+      "q_ee,0": "q_oe",
+      "q_ee,1": "q_eo",
+      "q_oe,0": "q_ee",
+      "q_oe,1": "q_oo",
+      "q_eo,0": "q_oo",
+      "q_eo,1": "q_ee",
+      "q_oo,0": "q_eo",
+      "q_oo,1": "q_oe"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q_ee",
+      "meaning": "Even number of 0s, even number of 1s (start and accepting)",
+      "is_start": true,
+      "is_accept": true,
+      "on_0": "q_oe",
+      "on_1": "q_eo"
+    },
+    {
+      "state": "q_oe",
+      "meaning": "Odd number of 0s, even number of 1s (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q_ee",
+      "on_1": "q_oo"
+    },
+    {
+      "state": "q_eo",
+      "meaning": "Even number of 0s, odd number of 1s (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q_oo",
+      "on_1": "q_ee"
+    },
+    {
+      "state": "q_oo",
+      "meaning": "Odd number of 0s, odd number of 1s (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q_eo",
+      "on_1": "q_oe"
+    }
+  ],
+  "metrics": {
+    "num_states": 4,
+    "num_transitions": 8,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 14,
+    "negative_count": 14,
+    "total_samples": 28,
+    "csv_file": "11_even_0s_and_even_1s.csv"
+  }
+}

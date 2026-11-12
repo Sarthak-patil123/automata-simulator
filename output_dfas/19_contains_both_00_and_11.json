@@ -1,0 +1,123 @@
+{
+  "question_number": 19,
+  "level": "Level 4 \u2013 Medium",
+  "title": "Contain both substrings 00 and 11",
+  "slug": "19_contains_both_00_and_11",
+  "description": "Accepts strings over {0, 1} containing both '00' and '11' as substrings (in any order).",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "q2",
+      "q3",
+      "q4",
+      "q5",
+      "q6",
+      "q7"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q4"
+    ],
+    "transitions": {
+      "q0,0": "q1",
+      "q0,1": "q5",
+      "q1,0": "q2",
+      "q1,1": "q5",
+      "q2,0": "q2",
+      "q2,1": "q3",
+      "q3,0": "q2",
+      "q3,1": "q4",
+      "q4,0": "q4",
+      "q4,1": "q4",
+      "q5,0": "q1",
+      "q5,1": "q6",
+      "q6,0": "q7",
+      "q6,1": "q6",
+      "q7,0": "q4",
+      "q7,1": "q6"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Start / neither 00 nor 11 seen (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q5"
+    },
+    {
+      "state": "q1",
+      "meaning": "Saw trailing 0, neither target achieved yet (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q2",
+      "on_1": "q5"
+    },
+    {
+      "state": "q2",
+      "meaning": "Achieved 00, now waiting for 11 / trailing 0 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q2",
+      "on_1": "q3"
+    },
+    {
+      "state": "q3",
+      "meaning": "Achieved 00, saw trailing 1 / waiting for one more 1 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q2",
+      "on_1": "q4"
+    },
+    {
+      "state": "q4",
+      "meaning": "Both 00 and 11 achieved (accepting trap state)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q4",
+      "on_1": "q4"
+    },
+    {
+      "state": "q5",
+      "meaning": "Saw trailing 1, neither target achieved yet (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q6"
+    },
+    {
+      "state": "q6",
+      "meaning": "Achieved 11, now waiting for 00 / trailing 1 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q7",
+      "on_1": "q6"
+    },
+    {
+      "state": "q7",
+      "meaning": "Achieved 11, saw trailing 0 / waiting for one more 0 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q4",
+      "on_1": "q6"
+    }
+  ],
+  "metrics": {
+    "num_states": 8,
+    "num_transitions": 16,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 18,
+    "negative_count": 18,
+    "total_samples": 36,
+    "csv_file": "19_contains_both_00_and_11.csv"
+  }
+}

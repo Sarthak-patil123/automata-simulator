@@ -1,0 +1,57 @@
+{
+  "question_number": 1,
+  "level": "Level 1 \u2013 Easy",
+  "title": "End with 0",
+  "slug": "01_ends_with_0",
+  "description": "Accepts strings over {0, 1} that end with the symbol 0.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q1"
+    ],
+    "transitions": {
+      "q0,0": "q1",
+      "q0,1": "q0",
+      "q1,0": "q1",
+      "q1,1": "q0"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Start / string is empty or last symbol read was 1 (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q0"
+    },
+    {
+      "state": "q1",
+      "meaning": "Last symbol read was 0 (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q1",
+      "on_1": "q0"
+    }
+  ],
+  "metrics": {
+    "num_states": 2,
+    "num_transitions": 4,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 8,
+    "negative_count": 8,
+    "total_samples": 16,
+    "csv_file": "01_ends_with_0.csv"
+  }
+}

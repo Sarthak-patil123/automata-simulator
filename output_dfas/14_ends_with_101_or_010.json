@@ -1,0 +1,113 @@
+{
+  "question_number": 14,
+  "level": "Level 3 \u2013 Moderate",
+  "title": "End with 101 or 010",
+  "slug": "14_ends_with_101_or_010",
+  "description": "Accepts strings over {0, 1} that terminate in either 101 or 010.",
+  "formal_definition": {
+    "states": [
+      "q_eps",
+      "q_0",
+      "q_1",
+      "q_01",
+      "q_10",
+      "q_010",
+      "q_101"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q_eps",
+    "accept_states": [
+      "q_010",
+      "q_101"
+    ],
+    "transitions": {
+      "q_eps,0": "q_0",
+      "q_eps,1": "q_1",
+      "q_0,0": "q_0",
+      "q_0,1": "q_01",
+      "q_1,0": "q_10",
+      "q_1,1": "q_1",
+      "q_01,0": "q_010",
+      "q_01,1": "q_1",
+      "q_10,0": "q_0",
+      "q_10,1": "q_101",
+      "q_010,0": "q_0",
+      "q_010,1": "q_101",
+      "q_101,0": "q_010",
+      "q_101,1": "q_1"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q_eps",
+      "meaning": "Start state / empty string (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q_0",
+      "on_1": "q_1"
+    },
+    {
+      "state": "q_0",
+      "meaning": "Ends with 0 (not 10 or 010) (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q_0",
+      "on_1": "q_01"
+    },
+    {
+      "state": "q_1",
+      "meaning": "Ends with 1 (not 01 or 101) (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q_10",
+      "on_1": "q_1"
+    },
+    {
+      "state": "q_01",
+      "meaning": "Ends with 01 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q_010",
+      "on_1": "q_1"
+    },
+    {
+      "state": "q_10",
+      "meaning": "Ends with 10 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q_0",
+      "on_1": "q_101"
+    },
+    {
+      "state": "q_010",
+      "meaning": "Ends with 010 (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q_0",
+      "on_1": "q_101"
+    },
+    {
+      "state": "q_101",
+      "meaning": "Ends with 101 (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q_010",
+      "on_1": "q_1"
+    }
+  ],
+  "metrics": {
+    "num_states": 7,
+    "num_transitions": 14,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 16,
+    "negative_count": 16,
+    "total_samples": 32,
+    "csv_file": "14_ends_with_101_or_010.csv"
+  }
+}

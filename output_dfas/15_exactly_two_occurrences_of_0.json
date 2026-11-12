@@ -1,0 +1,79 @@
+{
+  "question_number": 15,
+  "level": "Level 3 \u2013 Moderate",
+  "title": "Contain exactly two occurrences of 0",
+  "slug": "15_exactly_two_occurrences_of_0",
+  "description": "Accepts strings over {0, 1} with exactly two occurrences of 0 anywhere.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "q2",
+      "qd"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q2"
+    ],
+    "transitions": {
+      "q0,0": "q1",
+      "q0,1": "q0",
+      "q1,0": "q2",
+      "q1,1": "q1",
+      "q2,0": "qd",
+      "q2,1": "q2",
+      "qd,0": "qd",
+      "qd,1": "qd"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Zero 0s observed (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q0"
+    },
+    {
+      "state": "q1",
+      "meaning": "One 0 observed (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q2",
+      "on_1": "q1"
+    },
+    {
+      "state": "q2",
+      "meaning": "Exactly two 0s observed (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "qd",
+      "on_1": "q2"
+    },
+    {
+      "state": "qd",
+      "meaning": "Three or more 0s observed (dead / reject trap state)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "qd",
+      "on_1": "qd"
+    }
+  ],
+  "metrics": {
+    "num_states": 4,
+    "num_transitions": 8,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 13,
+    "negative_count": 13,
+    "total_samples": 26,
+    "csv_file": "15_exactly_two_occurrences_of_0.csv"
+  }
+}

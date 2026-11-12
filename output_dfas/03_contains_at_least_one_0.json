@@ -1,0 +1,57 @@
+{
+  "question_number": 3,
+  "level": "Level 1 \u2013 Easy",
+  "title": "Contain at least one 0",
+  "slug": "03_contains_at_least_one_0",
+  "description": "Accepts strings over {0, 1} that contain at least one occurrence of 0.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q1"
+    ],
+    "transitions": {
+      "q0,0": "q1",
+      "q0,1": "q0",
+      "q1,0": "q1",
+      "q1,1": "q1"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "No 0 seen yet (only 1s or empty string) (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q0"
+    },
+    {
+      "state": "q1",
+      "meaning": "At least one 0 has been observed (accepting trap state)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q1",
+      "on_1": "q1"
+    }
+  ],
+  "metrics": {
+    "num_states": 2,
+    "num_transitions": 4,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 8,
+    "negative_count": 7,
+    "total_samples": 15,
+    "csv_file": "03_contains_at_least_one_0.csv"
+  }
+}

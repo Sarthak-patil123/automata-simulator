@@ -1,0 +1,81 @@
+{
+  "question_number": 17,
+  "level": "Level 4 \u2013 Medium",
+  "title": "Do not contain substring 010",
+  "slug": "17_does_not_contain_substring_010",
+  "description": "Accepts strings over {0, 1} that do NOT contain '010' as a contiguous substring.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "q01",
+      "qd"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q0",
+      "q1",
+      "q01"
+    ],
+    "transitions": {
+      "q0,0": "q1",
+      "q0,1": "q0",
+      "q1,0": "q1",
+      "q1,1": "q01",
+      "q01,0": "qd",
+      "q01,1": "q0",
+      "qd,0": "qd",
+      "qd,1": "qd"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Valid string, no prefix of 010 tracked / last was 1 or empty (accepting)",
+      "is_start": true,
+      "is_accept": true,
+      "on_0": "q1",
+      "on_1": "q0"
+    },
+    {
+      "state": "q1",
+      "meaning": "Valid string, last symbol was 0 (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q1",
+      "on_1": "q01"
+    },
+    {
+      "state": "q01",
+      "meaning": "Valid string, last symbols were 01 (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "qd",
+      "on_1": "q0"
+    },
+    {
+      "state": "qd",
+      "meaning": "Forbidden substring 010 encountered (dead / reject trap state)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "qd",
+      "on_1": "qd"
+    }
+  ],
+  "metrics": {
+    "num_states": 4,
+    "num_transitions": 8,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 14,
+    "negative_count": 14,
+    "total_samples": 28,
+    "csv_file": "17_does_not_contain_substring_010.csv"
+  }
+}

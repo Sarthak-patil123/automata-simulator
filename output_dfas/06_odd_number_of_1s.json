@@ -1,0 +1,57 @@
+{
+  "question_number": 6,
+  "level": "Level 2 \u2013 Easy to Moderate",
+  "title": "Have an odd number of 1s",
+  "slug": "06_odd_number_of_1s",
+  "description": "Accepts strings over {0, 1} with an odd number of 1s.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q1"
+    ],
+    "transitions": {
+      "q0,0": "q0",
+      "q0,1": "q1",
+      "q1,0": "q1",
+      "q1,1": "q0"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Count of 1s is even (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q0",
+      "on_1": "q1"
+    },
+    {
+      "state": "q1",
+      "meaning": "Count of 1s is odd (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q1",
+      "on_1": "q0"
+    }
+  ],
+  "metrics": {
+    "num_states": 2,
+    "num_transitions": 4,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 10,
+    "negative_count": 10,
+    "total_samples": 20,
+    "csv_file": "06_odd_number_of_1s.csv"
+  }
+}

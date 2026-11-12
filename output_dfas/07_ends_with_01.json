@@ -1,0 +1,68 @@
+{
+  "question_number": 7,
+  "level": "Level 2 \u2013 Easy to Moderate",
+  "title": "End with 01",
+  "slug": "07_ends_with_01",
+  "description": "Accepts strings over {0, 1} that end with the suffix 01.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "q2"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q2"
+    ],
+    "transitions": {
+      "q0,0": "q1",
+      "q0,1": "q0",
+      "q1,0": "q1",
+      "q1,1": "q2",
+      "q2,0": "q1",
+      "q2,1": "q0"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "No matching suffix / last symbol read was 1 (or empty) (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q0"
+    },
+    {
+      "state": "q1",
+      "meaning": "Last symbol read was 0 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q2"
+    },
+    {
+      "state": "q2",
+      "meaning": "Last two symbols read were 01 (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q1",
+      "on_1": "q0"
+    }
+  ],
+  "metrics": {
+    "num_states": 3,
+    "num_transitions": 6,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 11,
+    "negative_count": 11,
+    "total_samples": 22,
+    "csv_file": "07_ends_with_01.csv"
+  }
+}

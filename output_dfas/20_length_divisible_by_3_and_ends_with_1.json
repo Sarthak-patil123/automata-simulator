@@ -1,0 +1,79 @@
+{
+  "question_number": 20,
+  "level": "Level 4 \u2013 Medium",
+  "title": "Length divisible by 3 and end with 1",
+  "slug": "20_length_divisible_by_3_and_ends_with_1",
+  "description": "Accepts strings over {0, 1} whose length is a multiple of 3 and which end with the symbol 1.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "q2",
+      "qa"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "qa"
+    ],
+    "transitions": {
+      "q0,0": "q1",
+      "q0,1": "q1",
+      "q1,0": "q2",
+      "q1,1": "q2",
+      "q2,0": "q0",
+      "q2,1": "qa",
+      "qa,0": "q1",
+      "qa,1": "q1"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Length mod 3 == 0, but did not end with 1 (or empty string) (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q1"
+    },
+    {
+      "state": "q1",
+      "meaning": "Length mod 3 == 1 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q2",
+      "on_1": "q2"
+    },
+    {
+      "state": "q2",
+      "meaning": "Length mod 3 == 2 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q0",
+      "on_1": "qa"
+    },
+    {
+      "state": "qa",
+      "meaning": "Length mod 3 == 0 and last symbol was 1 (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q1",
+      "on_1": "q1"
+    }
+  ],
+  "metrics": {
+    "num_states": 4,
+    "num_transitions": 8,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 16,
+    "negative_count": 16,
+    "total_samples": 32,
+    "csv_file": "20_length_divisible_by_3_and_ends_with_1.csv"
+  }
+}

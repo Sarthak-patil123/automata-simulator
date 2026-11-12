@@ -1,0 +1,68 @@
+{
+  "question_number": 2,
+  "level": "Level 1 \u2013 Easy",
+  "title": "Start with 1",
+  "slug": "02_starts_with_1",
+  "description": "Accepts strings over {0, 1} that start with the symbol 1.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "qd"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q1"
+    ],
+    "transitions": {
+      "q0,0": "qd",
+      "q0,1": "q1",
+      "q1,0": "q1",
+      "q1,1": "q1",
+      "qd,0": "qd",
+      "qd,1": "qd"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Start state / empty string (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "qd",
+      "on_1": "q1"
+    },
+    {
+      "state": "q1",
+      "meaning": "First symbol was 1 (accepting trap state)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q1",
+      "on_1": "q1"
+    },
+    {
+      "state": "qd",
+      "meaning": "First symbol was 0 (dead / reject trap state)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "qd",
+      "on_1": "qd"
+    }
+  ],
+  "metrics": {
+    "num_states": 3,
+    "num_transitions": 6,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 8,
+    "negative_count": 8,
+    "total_samples": 16,
+    "csv_file": "02_starts_with_1.csv"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "question_number": 12,
+  "level": "Level 3 \u2013 Moderate",
+  "title": "Contain at least two consecutive 0s",
+  "slug": "12_at_least_two_consecutive_0s",
+  "description": "Accepts strings over {0, 1} containing at least two consecutive 0s (equivalent to containing '00').",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "q2"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q2"
+    ],
+    "transitions": {
+      "q0,0": "q1",
+      "q0,1": "q0",
+      "q1,0": "q2",
+      "q1,1": "q0",
+      "q2,0": "q2",
+      "q2,1": "q2"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Zero consecutive 0s currently tracked (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q0"
+    },
+    {
+      "state": "q1",
+      "meaning": "One 0 seen currently (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q2",
+      "on_1": "q0"
+    },
+    {
+      "state": "q2",
+      "meaning": "Two or more consecutive 0s achieved (accepting trap state)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q2",
+      "on_1": "q2"
+    }
+  ],
+  "metrics": {
+    "num_states": 3,
+    "num_transitions": 6,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 12,
+    "negative_count": 12,
+    "total_samples": 24,
+    "csv_file": "12_at_least_two_consecutive_0s.csv"
+  }
+}

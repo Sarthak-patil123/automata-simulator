@@ -1,0 +1,68 @@
+{
+  "question_number": 13,
+  "level": "Level 3 \u2013 Moderate",
+  "title": "Number of 1s divisible by 3",
+  "slug": "13_number_of_1s_divisible_by_3",
+  "description": "Accepts strings over {0, 1} where the total count of 1s is a multiple of 3.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "q2"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q0"
+    ],
+    "transitions": {
+      "q0,0": "q0",
+      "q0,1": "q1",
+      "q1,0": "q1",
+      "q1,1": "q2",
+      "q2,0": "q2",
+      "q2,1": "q0"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Count of 1s mod 3 == 0 (accepting)",
+      "is_start": true,
+      "is_accept": true,
+      "on_0": "q0",
+      "on_1": "q1"
+    },
+    {
+      "state": "q1",
+      "meaning": "Count of 1s mod 3 == 1 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q2"
+    },
+    {
+      "state": "q2",
+      "meaning": "Count of 1s mod 3 == 2 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q2",
+      "on_1": "q0"
+    }
+  ],
+  "metrics": {
+    "num_states": 3,
+    "num_transitions": 6,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 13,
+    "negative_count": 13,
+    "total_samples": 26,
+    "csv_file": "13_number_of_1s_divisible_by_3.csv"
+  }
+}

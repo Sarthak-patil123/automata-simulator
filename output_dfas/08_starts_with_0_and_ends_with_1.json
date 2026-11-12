@@ -1,0 +1,79 @@
+{
+  "question_number": 8,
+  "level": "Level 2 \u2013 Easy to Moderate",
+  "title": "Start with 0 and end with 1",
+  "slug": "08_starts_with_0_and_ends_with_1",
+  "description": "Accepts strings over {0, 1} that start with 0 and end with 1.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "q2",
+      "qd"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q2"
+    ],
+    "transitions": {
+      "q0,0": "q1",
+      "q0,1": "qd",
+      "q1,0": "q1",
+      "q1,1": "q2",
+      "q2,0": "q1",
+      "q2,1": "q2",
+      "qd,0": "qd",
+      "qd,1": "qd"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Initial state / empty string (non-accepting)",
+      "is_start": true,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "qd"
+    },
+    {
+      "state": "q1",
+      "meaning": "Started with 0, and last symbol was 0 (non-accepting)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "q1",
+      "on_1": "q2"
+    },
+    {
+      "state": "q2",
+      "meaning": "Started with 0, and last symbol was 1 (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q1",
+      "on_1": "q2"
+    },
+    {
+      "state": "qd",
+      "meaning": "Started with 1 (dead / reject trap state)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "qd",
+      "on_1": "qd"
+    }
+  ],
+  "metrics": {
+    "num_states": 4,
+    "num_transitions": 8,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 12,
+    "negative_count": 12,
+    "total_samples": 24,
+    "csv_file": "08_starts_with_0_and_ends_with_1.csv"
+  }
+}

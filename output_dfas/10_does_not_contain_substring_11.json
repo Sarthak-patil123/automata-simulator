@@ -1,0 +1,69 @@
+{
+  "question_number": 10,
+  "level": "Level 2 \u2013 Easy to Moderate",
+  "title": "Do not contain substring 11",
+  "slug": "10_does_not_contain_substring_11",
+  "description": "Accepts strings over {0, 1} that do NOT contain '11' as a substring.",
+  "formal_definition": {
+    "states": [
+      "q0",
+      "q1",
+      "qd"
+    ],
+    "alphabet": [
+      "0",
+      "1"
+    ],
+    "start_state": "q0",
+    "accept_states": [
+      "q0",
+      "q1"
+    ],
+    "transitions": {
+      "q0,0": "q0",
+      "q0,1": "q1",
+      "q1,0": "q0",
+      "q1,1": "qd",
+      "qd,0": "qd",
+      "qd,1": "qd"
+    }
+  },
+  "transition_table": [
+    {
+      "state": "q0",
+      "meaning": "Valid string, last symbol was 0 or empty (accepting)",
+      "is_start": true,
+      "is_accept": true,
+      "on_0": "q0",
+      "on_1": "q1"
+    },
+    {
+      "state": "q1",
+      "meaning": "Valid string, last symbol was 1 (accepting)",
+      "is_start": false,
+      "is_accept": true,
+      "on_0": "q0",
+      "on_1": "qd"
+    },
+    {
+      "state": "qd",
+      "meaning": "Forbidden substring 11 seen (dead / reject trap state)",
+      "is_start": false,
+      "is_accept": false,
+      "on_0": "qd",
+      "on_1": "qd"
+    }
+  ],
+  "metrics": {
+    "num_states": 3,
+    "num_transitions": 6,
+    "is_complete": true,
+    "is_minimal": true
+  },
+  "testcase_summary": {
+    "positive_count": 11,
+    "negative_count": 11,
+    "total_samples": 22,
+    "csv_file": "10_does_not_contain_substring_11.csv"
+  }
+}
