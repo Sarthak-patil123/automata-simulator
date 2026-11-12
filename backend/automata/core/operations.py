@@ -108,6 +108,8 @@ def minimize_dfa(dfa: DFA) -> DFA:
         if any(s in accept_states for s in block)
     }
     new_transitions: Dict[Tuple[str, str], str] = {}
+    new_confidence: Dict[Tuple[str, str], str] = {}
+    orig_conf = getattr(dfa, "transition_confidence", {})
 
     for block in partition:
         rep = next(iter(block))
@@ -118,6 +120,13 @@ def minimize_dfa(dfa: DFA) -> DFA:
                 v_block = state_to_block[nxt]
                 v_name = block_to_name[v_block]
                 new_transitions[(u_name, a)] = v_name
+                # Check confidence from states in block
+                c = "completed"
+                for s in block:
+                    if orig_conf.get((s, a), "direct") == "direct":
+                        c = "direct"
+                        break
+                new_confidence[(u_name, a)] = c
 
     minimized = DFA(
         states=new_states,
@@ -125,6 +134,7 @@ def minimize_dfa(dfa: DFA) -> DFA:
         transitions=new_transitions,
         start_state="q0",
         accept_states=new_accept_states,
+        transition_confidence=new_confidence,
     )
     return minimized.canonicalize()
 

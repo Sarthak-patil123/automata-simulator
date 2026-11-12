@@ -121,6 +121,9 @@ def complete_dfa_consistently(dfa: DFA, negative_strings: List[str]) -> DFA:
 
     curr_transitions = dict(dfa.transitions)
     curr_states = set(dfa.states)
+    confidence_map: Dict[Tuple[str, str], str] = {}
+    for (s, a) in dfa.transitions:
+        confidence_map[(s, a)] = "direct"
 
     for s, a in missing:
         best_target = None
@@ -144,12 +147,15 @@ def complete_dfa_consistently(dfa: DFA, negative_strings: List[str]) -> DFA:
 
         if best_target is not None:
             curr_transitions[(s, a)] = best_target
+            confidence_map[(s, a)] = "completed"
         else:
             sink = "_sink_"
             curr_states.add(sink)
             for ch in alphabet:
                 curr_transitions[(sink, ch)] = sink
+                confidence_map[(sink, ch)] = "completed"
             curr_transitions[(s, a)] = sink
+            confidence_map[(s, a)] = "completed"
 
     return DFA(
         states=curr_states,
@@ -157,6 +163,7 @@ def complete_dfa_consistently(dfa: DFA, negative_strings: List[str]) -> DFA:
         transitions=curr_transitions,
         start_state=dfa.start_state,
         accept_states=set(dfa.accept_states),
+        transition_confidence=confidence_map,
     )
 
 

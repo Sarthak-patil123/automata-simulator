@@ -33,27 +33,34 @@ def format_graph_payload(automaton: Union[DFA, NFA], name: str = "Automaton") ->
             "classes": " ".join(classes),
         })
 
-    # Deduplicate edges by (source, target) pair.
-    # DFA.to_graph_dict() emits one entry per symbol, with a "combined_label"
-    # field that already contains the grouped label for that (source, target) pair.
-    # We keep the first occurrence of each pair and use its combined_label.
-    seen_pairs: Dict[tuple, Dict] = {}
+    # Deduplicate edges by (source, target) pair and compute combined confidence.
+    seen_pairs: Dict[Tuple[str, str], List[Dict]] = {}
     for edge in raw_dict["edges"]:
         pair = (edge["source"], edge["target"])
-        if pair not in seen_pairs:
-            seen_pairs[pair] = edge
+        seen_pairs.setdefault(pair, []).append(edge)
 
     enhanced_edges = []
-    for (src, tgt), edge in seen_pairs.items():
-        combined = edge.get("combined_label", edge.get("symbol", ""))
+    for (src, tgt), edge_list in seen_pairs.items():
+        first_edge = edge_list[0]
+        combined = first_edge.get("combined_label", first_edge.get("symbol", ""))
+
+        all_completed = all(e.get("confidence") == "completed" or e.get("is_completed") for e in edge_list)
+        any_completed = any(e.get("confidence") == "completed" or e.get("is_completed") for e in edge_list)
+        confidence = "completed" if all_completed else ("mixed" if any_completed else "direct")
+        is_completed = all_completed
+
         enhanced_edges.append({
             "id": f"e_{src}_{tgt}",
             "source": src,
             "target": tgt,
             "label": combined,
+            "confidence": confidence,
+            "is_completed": is_completed,
             "data": {
                 "symbols": combined.split(",") if combined else [],
                 "combined_label": combined,
+                "confidence": confidence,
+                "is_completed": is_completed,
             },
             "animated": False,
         })

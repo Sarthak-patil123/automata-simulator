@@ -19,6 +19,13 @@ def complete_and_canonicalize_nfa(nfa: NFA, negative_strings: List[str]) -> NFA:
         k: set(v) for k, v in nfa.transitions.items()
     }
 
+    orig_transitions: Set[Tuple[str, str]] = set()
+    for (u, a) in nfa.transitions:
+        if nfa.transitions[(u, a)]:
+            orig_transitions.add((u, a))
+
+    completed_transitions: Set[Tuple[str, str]] = set()
+
     for s in all_states:
         for a in alphabet:
             if (s, a) not in curr_transitions or not curr_transitions[(s, a)]:
@@ -37,6 +44,7 @@ def complete_and_canonicalize_nfa(nfa: NFA, negative_strings: List[str]) -> NFA:
                     )
                     if all(not test_nfa.accepts(neg) for neg in negative_strings):
                         curr_transitions.setdefault((s, a), set()).add(cand)
+                        completed_transitions.add((s, a))
                         break
 
     # Canonicalize state names with BFS from start_state
@@ -63,9 +71,13 @@ def complete_and_canonicalize_nfa(nfa: NFA, negative_strings: List[str]) -> NFA:
             counter += 1
 
     canon_trans: Dict[Tuple[str, str], Set[str]] = {}
+    canon_confidence: Dict[Tuple[str, str], str] = {}
+
     for (u, a), tgts in curr_transitions.items():
         if u in mapping:
-            canon_trans[(mapping[u], a)] = {mapping[t] for t in tgts if t in mapping}
+            mu = mapping[u]
+            canon_trans[(mu, a)] = {mapping[t] for t in tgts if t in mapping}
+            canon_confidence[(mu, a)] = "completed" if (u, a) in completed_transitions else "direct"
 
     start_st = mapping.get(nfa.start_state, "q0") if nfa.start_state else None
     accept_sts = {mapping[s] for s in nfa.accept_states if s in mapping}
@@ -76,6 +88,7 @@ def complete_and_canonicalize_nfa(nfa: NFA, negative_strings: List[str]) -> NFA:
         transitions=canon_trans,
         start_state=start_st,
         accept_states=accept_sts,
+        transition_confidence=canon_confidence,
     )
 
 

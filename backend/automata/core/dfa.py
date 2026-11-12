@@ -16,12 +16,16 @@ class DFA:
         transitions: Optional[Dict[Tuple[str, str], str]] = None,
         start_state: Optional[str] = None,
         accept_states: Optional[Set[str]] = None,
+        transition_confidence: Optional[Dict[Tuple[str, str], str]] = None,
     ):
         self.states: Set[str] = set(states) if states is not None else set()
         self.alphabet: Set[str] = set(alphabet) if alphabet is not None else set()
         self.transitions: Dict[Tuple[str, str], str] = dict(transitions) if transitions is not None else {}
         self.start_state: Optional[str] = start_state
         self.accept_states: Set[str] = set(accept_states) if accept_states is not None else set()
+        self.transition_confidence: Dict[Tuple[str, str], str] = (
+            dict(transition_confidence) if transition_confidence is not None else {}
+        )
 
         if self.start_state is not None:
             self.states.add(self.start_state)
@@ -130,6 +134,7 @@ class DFA:
             transitions=dict(self.transitions),
             start_state=self.start_state,
             accept_states=set(self.accept_states),
+            transition_confidence=dict(self.transition_confidence),
         )
 
     def get_reachable_states(self) -> Set[str]:
@@ -202,10 +207,13 @@ class DFA:
         new_start = mapping[self.start_state]
         new_accept = {mapping[s] for s in self.accept_states if s in reachable}
         new_transitions = {}
+        new_confidence = {}
 
         for (u, sym), v in self.transitions.items():
             if u in mapping and v in mapping:
-                new_transitions[(mapping[u], sym)] = mapping[v]
+                mu, mv = mapping[u], mapping[v]
+                new_transitions[(mu, sym)] = mv
+                new_confidence[(mu, sym)] = self.transition_confidence.get((u, sym), "direct")
 
         return DFA(
             states=new_states,
@@ -213,6 +221,7 @@ class DFA:
             transitions=new_transitions,
             start_state=new_start,
             accept_states=new_accept,
+            transition_confidence=new_confidence,
         )
 
     def to_graph_dict(self) -> Dict[str, Any]:
@@ -242,12 +251,15 @@ class DFA:
         for (u, v), syms in sorted(edge_groups.items()):
             label = ",".join(sorted(syms))
             for sym in syms:
+                conf = self.transition_confidence.get((u, sym), "direct")
                 edges.append({
                     "id": f"e_{u}_{v}_{sym}",
                     "source": u,
                     "target": v,
                     "symbol": sym,
                     "combined_label": label,
+                    "confidence": conf,
+                    "is_completed": (conf == "completed"),
                 })
 
         return {

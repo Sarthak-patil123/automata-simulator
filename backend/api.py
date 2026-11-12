@@ -14,6 +14,7 @@ from .automata.dataset.generator import (
 )
 from .automata.learning.rpni import RPNILearner
 from .automata.learning.edsm import EDSMLearner
+from .automata.learning.sat_dfa import SATDFALearner
 from .automata.learning.lstar import LStarLearner, Teacher, InteractiveActiveLearner
 from .automata.learning.nfa_learning import NFALearner
 from .automata.evaluation.metrics import evaluate_automaton
@@ -278,10 +279,25 @@ class AutomataMLService:
             }
 
         else:
-            # DFA path: RPNI warm-start then L* HITL
-            rpni_learner = RPNILearner(pos_strings, neg_strings, alphabet)
-            rpni_result = rpni_learner.learn()
-            first_pass_dfa = rpni_result["inferred_dfa"]
+            # DFA path: Exact SAT synthesis for small datasets, or RPNI warm-start then L* HITL
+            total_samples = len(pos_strings) + len(neg_strings)
+            first_pass_dfa = None
+            inference_engine = "RPNI (State-Merging)"
+
+            if total_samples <= 25 and len(pos_strings) > 0 and len(neg_strings) > 0:
+                try:
+                    sat_learner = SATDFALearner(pos_strings, neg_strings, alphabet, timeout_sec=2.0)
+                    sat_res = sat_learner.learn(max_states=8)
+                    if sat_res is not None:
+                        first_pass_dfa = sat_res["inferred_dfa"]
+                        inference_engine = f"Exact SAT (Biermann-Feldman, k={sat_res['k']})"
+                except Exception:
+                    first_pass_dfa = None
+
+            if first_pass_dfa is None:
+                rpni_learner = RPNILearner(pos_strings, neg_strings, alphabet)
+                rpni_result = rpni_learner.learn()
+                first_pass_dfa = rpni_result["inferred_dfa"]
 
             session["model"] = first_pass_dfa
             self._current_model = first_pass_dfa
@@ -322,6 +338,7 @@ class AutomataMLService:
                     "session_id": sid,
                     "needs_hitl": True,
                     "hitl_status": "NEED_MEMBERSHIP_QUERY",
+                    "inference_engine": inference_engine,
                     "query_string": step_result["query_string"],
                     "first_pass_graph": first_pass_graph,
                     "first_pass_metrics": first_pass_metrics,
@@ -337,6 +354,7 @@ class AutomataMLService:
                     "session_id": sid,
                     "needs_hitl": True,
                     "hitl_status": "CONJECTURE_READY",
+                    "inference_engine": inference_engine,
                     "first_pass_graph": first_pass_graph,
                     "first_pass_metrics": first_pass_metrics,
                     "conjectured_graph": conj_graph,
@@ -355,6 +373,7 @@ class AutomataMLService:
                 return {
                     "session_id": sid,
                     "needs_hitl": False,
+                    "inference_engine": inference_engine,
                     "graph": final_graph,
                     "metrics": metrics,
                 }
@@ -376,19 +395,100 @@ class AutomataMLService:
         return self._process_hitl_step_result(sid, step_result)
 
     def confirm_hitl_conjecture(
-        self, session_id: str = "default", counterexample: Optional[str] = None
+        self,
+        session_id: str = "default",
+        counterexample: Optional[str] = None,
+        expected_label: Optional[bool] = None,
     ) -> Dict[str, Any]:
         """
-        Routes to learner.provide_counterexample(counterexample), processes result.
-        If CONVERGED: updates session model to the final DFA.
+        Confirms a conjecture or incorporates a counterexample via incremental synthesis.
+        When a counterexample is provided:
+          - Automatically determines the correct ground-truth label
+          - Adds counterexample to (S+, S-) and known_labels
+          - Triggers fast incremental synthesis (SAT / RPNI)
+          - Emits the refined conjecture immediately without re-querying known prefixes.
         """
         sid = session_id or "default"
         session = self._get_or_create_session(sid)
         learner: Optional[InteractiveActiveLearner] = session.get("learner") or self._interactive_session
-        if learner is None:
-            raise ValueError(f"No active HITL session for session_id={sid!r}.")
-        step_result = learner.provide_counterexample(counterexample)
-        return self._process_hitl_step_result(sid, step_result)
+
+        if not counterexample:
+            if learner is None:
+                raise ValueError(f"No active HITL session for session_id={sid!r}.")
+            step_result = learner.provide_counterexample(None)
+            return self._process_hitl_step_result(sid, step_result)
+
+        # Counterexample provided
+        curr_model = session.get("model") or (learner.current_conjecture if learner else None)
+        if expected_label is not None:
+            true_label = bool(expected_label)
+        elif curr_model is not None:
+            # Counterexample indicates current model was wrong, so true label is inverted
+            true_label = not curr_model.accepts(counterexample)
+        else:
+            true_label = False
+
+        # 1. Update session examples
+        if true_label:
+            if counterexample not in session["positive"]:
+                session["positive"].append(counterexample)
+        else:
+            if counterexample not in session["negative"]:
+                session["negative"].append(counterexample)
+
+        # 2. Update learner known labels and query history
+        if learner is not None:
+            learner.known_labels[counterexample] = true_label
+            learner.query_history.append({
+                "query_string": counterexample,
+                "answer": true_label,
+                "source": "counterexample",
+            })
+
+        # 3. Incremental Re-Synthesis with updated dataset
+        pos_strings = session["positive"]
+        neg_strings = session["negative"]
+        alphabet = session.get("alphabet") or ["0", "1"]
+        total_samples = len(pos_strings) + len(neg_strings)
+
+        refined_dfa = None
+        engine_name = "RPNI (State-Merging)"
+        if total_samples <= 25:
+            try:
+                sat_learner = SATDFALearner(pos_strings, neg_strings, alphabet, timeout_sec=2.5)
+                sat_res = sat_learner.learn(max_states=8)
+                if sat_res is not None:
+                    refined_dfa = sat_res["inferred_dfa"]
+                    engine_name = f"Exact SAT (Biermann-Feldman, k={sat_res['k']})"
+            except Exception:
+                refined_dfa = None
+
+        if refined_dfa is None:
+            rpni_learner = RPNILearner(pos_strings, neg_strings, alphabet)
+            rpni_result = rpni_learner.learn()
+            refined_dfa = rpni_result["inferred_dfa"]
+
+        session["model"] = refined_dfa
+        self._current_model = refined_dfa
+        if learner is not None:
+            learner.current_conjecture = refined_dfa
+
+        refined_graph = format_graph_payload(refined_dfa, name="DFA (Refined Conjecture)")
+        refined_metrics = evaluate_automaton(refined_dfa, Dataset(pos_strings, neg_strings, alphabet))
+        total_queries = len(learner.query_history) if learner else 0
+
+        return {
+            "status": "CONJECTURE_READY",
+            "session_id": sid,
+            "hitl_status": "CONJECTURE_READY",
+            "conjectured_graph": refined_graph,
+            "metrics": refined_metrics,
+            "counterexample_incorporated": counterexample,
+            "counterexample_label": "accepted" if true_label else "rejected",
+            "inference_engine": engine_name,
+            "message": f"Incorporated counterexample '{counterexample}' as {'ACCEPTED' if true_label else 'REJECTED'}. Model refined via {engine_name}.",
+            "total_queries_asked": total_queries,
+        }
 
     def _process_hitl_step_result(
         self, session_id: str, step_result: Dict[str, Any]

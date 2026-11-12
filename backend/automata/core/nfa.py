@@ -19,6 +19,7 @@ class NFA:
         transitions: Optional[Dict[Tuple[str, str], Set[str]]] = None,
         start_state: Optional[str] = None,
         accept_states: Optional[Set[str]] = None,
+        transition_confidence: Optional[Dict[Tuple[str, str], str]] = None,
     ):
         self.states: Set[str] = set(states) if states is not None else set()
         self.alphabet: Set[str] = {
@@ -36,6 +37,9 @@ class NFA:
 
         self.start_state: Optional[str] = start_state
         self.accept_states: Set[str] = set(accept_states) if accept_states is not None else set()
+        self.transition_confidence: Dict[Tuple[str, str], str] = (
+            dict(transition_confidence) if transition_confidence is not None else {}
+        )
 
         if self.start_state is not None:
             self.states.add(self.start_state)
@@ -236,12 +240,15 @@ class NFA:
         edges = []
         for (u, sym), targets in sorted(self.transitions.items()):
             for v in sorted(targets):
+                conf = self.transition_confidence.get((u, sym), "direct")
                 edges.append({
                     "id": f"e_{u}_{v}_{sym}",
                     "source": u,
                     "target": v,
                     "symbol": sym,
                     "combined_label": sym,
+                    "confidence": conf,
+                    "is_completed": (conf == "completed"),
                 })
 
         return {

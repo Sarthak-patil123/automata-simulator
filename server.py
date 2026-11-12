@@ -124,6 +124,7 @@ class AutomataRequestHandler(BaseHTTPRequestHandler):
                 res = service.confirm_hitl_conjecture(
                     session_id=body.get("session_id", ""),
                     counterexample=body.get("counterexample", None),
+                    expected_label=body.get("expected_label", None),
                 )
                 self._set_headers(200)
                 self.wfile.write(json.dumps(res).encode("utf-8"))

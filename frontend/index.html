@@ -142,6 +142,8 @@
       const [hitlQuery, setHitlQuery] = useState(null);
       const [hitlQueryCount, setHitlQueryCount] = useState(0);
       const [counterexampleInput, setCounterexampleInput] = useState('');
+      const [inferenceEngine, setInferenceEngine] = useState(null);
+      const [hitlFeedback, setHitlFeedback] = useState(null);
 
       // Simulation
       const [testString, setTestString] = useState('10101');
@@ -201,6 +203,15 @@
 
       // ── HITL Response Handler ───────────────────────────────────────────────
       function handleHITLResponse(data) {
+        if (data.inference_engine) {
+          setInferenceEngine(data.inference_engine);
+        }
+        if (data.metrics) {
+          setModelMetrics(data.metrics);
+        }
+        if (data.message) {
+          setHitlFeedback(data.message);
+        }
         if (data.hitl_status === 'NEED_MEMBERSHIP_QUERY') {
           setHitlMode('querying');
           setHitlQuery({ query_string: data.query_string, total_queries_asked: data.total_queries_asked });
@@ -233,6 +244,7 @@
         setHitlMode('idle');
         setHitlQuery(null);
         setHitlQueryCount(0);
+        setHitlFeedback(null);
         setSimulationTrace(null);
         setCurrentStepIndex(0);
         setErrorMsg(null);
@@ -263,6 +275,9 @@
           setNodePositions(pos);
           setGraphData(firstGraph);
           setModelMetrics(firstMetrics);
+          if (data.inference_engine) {
+            setInferenceEngine(data.inference_engine);
+          }
 
           if (data.needs_hitl) {
             if (data.hitl_status === 'NEED_MEMBERSHIP_QUERY') {
@@ -300,12 +315,16 @@
       }
 
       // ── HITL Confirm ────────────────────────────────────────────────────────
-      async function confirmConjecture(counterexample) {
+      async function confirmConjecture(counterexample, expectedLabel = null) {
         try {
           const resp = await fetch('/api/hitl/confirm', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_id: sessionId, counterexample: counterexample || null })
+            body: JSON.stringify({
+              session_id: sessionId,
+              counterexample: counterexample || null,
+              expected_label: expectedLabel
+            })
           });
           const data = await resp.json();
           handleHITLResponse(data);
@@ -403,11 +422,13 @@
         const tgtPos = nodePositions[edge.target];
         if (!srcPos || !tgtPos) return null;
 
+        const isCompleted = edge.is_completed || edge.data?.is_completed || edge.confidence === 'completed' || edge.data?.confidence === 'completed';
         const isActive = activeEdgeId && activeEdgeId.startsWith(edge.id);
-        const stroke = isActive ? '#3B82F6' : '#64748B';
-        const strokeW = isActive ? 3.5 : 1.8;
-        const marker = isActive ? 'url(#arrow-active)' : 'url(#arrow)';
-        const textFill = isActive ? '#60A5FA' : '#CBD5E1';
+        const stroke = isActive ? '#3B82F6' : (isCompleted ? '#F59E0B' : '#64748B');
+        const strokeW = isActive ? 3.5 : (isCompleted ? 2.0 : 1.8);
+        const marker = isActive ? 'url(#arrow-active)' : (isCompleted ? 'url(#arrow-completed)' : 'url(#arrow)');
+        const textFill = isActive ? '#60A5FA' : (isCompleted ? '#FCD34D' : '#CBD5E1');
+        const strokeDash = isCompleted ? '5 4' : 'none';
 
         let d, lx, ly;
 
@@ -454,6 +475,7 @@
               d={d}
               stroke={stroke}
               strokeWidth={strokeW}
+              strokeDasharray={strokeDash}
               fill="none"
               markerEnd={marker}
             />
@@ -468,6 +490,7 @@
               alignmentBaseline="middle"
             >
               {edge.label}
+              {isCompleted && <tspan fontSize="9" fill="#F59E0B" dx="2">~</tspan>}
             </text>
           </g>
         );
@@ -743,26 +766,51 @@
                       <p className="text-xs text-slate-500 mb-3">The graph shows the current hypothesized DFA. Is it correct?</p>
                       <button
                         onClick={() => confirmConjecture(null)}
-                        className="w-full mb-2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition"
+                        className="w-full mb-3 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition shadow-sm"
                       >
                         ✅ Yes, This DFA is Correct!
                       </button>
-                      <div className="text-xs text-slate-500 mb-1">Or provide a counterexample string it gets wrong:</div>
-                      <div className="flex gap-2">
-                        <input
-                          value={counterexampleInput}
-                          onChange={e => setCounterexampleInput(e.target.value)}
-                          placeholder="e.g. 1010..."
-                          className="flex-1 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-blue-500"
-                        />
-                        <button
-                          onClick={() => confirmConjecture(counterexampleInput)}
-                          disabled={!counterexampleInput}
-                          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold disabled:opacity-40 transition"
-                        >
-                          Submit
-                        </button>
+                      <div className="border-t border-slate-200 pt-3">
+                        <div className="text-xs font-semibold text-slate-700 mb-1">Counterexample-Driven Refinement:</div>
+                        <div className="text-[11px] text-slate-500 mb-2">If the DFA makes a mistake, specify the string and its true label:</div>
+                        <div className="flex gap-2 mb-2">
+                          <input
+                            value={counterexampleInput}
+                            onChange={e => setCounterexampleInput(e.target.value)}
+                            placeholder="e.g. 0101 (or empty for ε)"
+                            className="flex-1 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-blue-500"
+                          />
+                          <button
+                            onClick={() => confirmConjecture(counterexampleInput, null)}
+                            disabled={counterexampleInput === ''}
+                            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold disabled:opacity-40 transition"
+                            title="Auto-detect label by flipping conjecture prediction"
+                          >
+                            Auto Submit
+                          </button>
+                        </div>
+                        {counterexampleInput !== '' && (
+                          <div className="grid grid-cols-2 gap-2 mb-2">
+                            <button
+                              onClick={() => confirmConjecture(counterexampleInput, true)}
+                              className="py-1.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition"
+                            >
+                              <span>➕ Should be ACCEPTED</span>
+                            </button>
+                            <button
+                              onClick={() => confirmConjecture(counterexampleInput, false)}
+                              className="py-1.5 px-2 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition"
+                            >
+                              <span>➖ Should be REJECTED</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
+                      {hitlFeedback && (
+                        <div className="mt-2 p-2 bg-blue-50 border border-blue-200 text-blue-800 text-[11px] rounded-lg">
+                          ℹ️ {hitlFeedback}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -908,9 +956,16 @@
               <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
-                      {graphData ? `${graphData.automaton_type} — ${graphData.nodes?.length} States` : 'Automata Graph'}
-                    </h2>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
+                        {graphData ? `${graphData.automaton_type} — ${graphData.nodes?.length} States` : 'Automata Graph'}
+                      </h2>
+                      {inferenceEngine && (
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold normal-case">
+                          {inferenceEngine}
+                        </span>
+                      )}
+                    </div>
                     {hitlMode === 'converged' && (
                       <span className="text-xs text-emerald-600 font-bold">✅ 100% Exact Minimal DFA</span>
                     )}
@@ -947,6 +1002,9 @@
                         <marker id="arrow-active" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
                           <polygon points="0 1, 8 4, 0 7" fill="#3B82F6" />
                         </marker>
+                        <marker id="arrow-completed" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                          <polygon points="0 1, 8 4, 0 7" fill="#F59E0B" />
+                        </marker>
                       </defs>
                       <g transform={`scale(${canvasScale})`}>
                         {/* Edges first (behind nodes) */}
@@ -965,7 +1023,7 @@
 
                   {/* Canvas Legend */}
                   {graphData && (
-                    <div className="absolute bottom-3 left-3 bg-slate-800/90 border border-slate-700 rounded-lg p-2 text-[11px] font-mono flex items-center gap-4 text-slate-300">
+                    <div className="absolute bottom-3 left-3 bg-slate-800/90 border border-slate-700 rounded-lg p-2 text-[11px] font-mono flex items-center gap-4 text-slate-300 flex-wrap">
                       <div className="flex items-center gap-1.5">
                         <span className="w-3 h-3 rounded-full border border-slate-400 bg-slate-700 inline-block"></span>
                         <span>State</span>
@@ -977,6 +1035,14 @@
                       <div className="flex items-center gap-1.5">
                         <span className="w-3 h-3 rounded-full border-2 border-blue-400 bg-blue-900 inline-block"></span>
                         <span>Active</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-4 h-0.5 bg-slate-400 inline-block"></span>
+                        <span>Direct (S+)</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-4 h-0.5 border-b border-dashed border-amber-400 inline-block"></span>
+                        <span className="text-amber-300">Completed (S-)</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <span className="text-yellow-400">▶</span>
