@@ -1,0 +1,5191 @@
+{
+  "timestamp": "2026-11-14T23:19:14",
+  "total_time_sec": 7.62,
+  "summary": {
+    "pass": 20,
+    "fail": 0,
+    "error": 0,
+    "total_hitl": 12
+  },
+  "results": [
+    {
+      "q": 1,
+      "slug": "01_ends_with_0",
+      "title": "End with 0",
+      "level": "Level 1 \u2013 Easy",
+      "session_id": "d29e607e-a629-4bac-98f7-51b4e353c8ac",
+      "pos_count": 8,
+      "neg_count": 8,
+      "total": 16,
+      "timings": {
+        "preprocess_csv": 0.0018,
+        "train_model": 0.0026,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0001
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=2)",
+      "first_pass_metrics": {
+        "total_samples": 16,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 8,
+          "false_positive": 0,
+          "true_negative": 8,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 16,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 8,
+          "false_positive": 0,
+          "true_negative": 8,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'0'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 2,
+      "dfa_transitions": 4,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 2,
+      "slug": "02_starts_with_1",
+      "title": "Start with 1",
+      "level": "Level 1 \u2013 Easy",
+      "session_id": "b0e12de5-05a8-4d40-bfae-c3be6e23bc55",
+      "pos_count": 8,
+      "neg_count": 8,
+      "total": 16,
+      "timings": {
+        "preprocess_csv": 0.0006,
+        "train_model": 0.006,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0001
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=3)",
+      "first_pass_metrics": {
+        "total_samples": 16,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 8,
+          "false_positive": 0,
+          "true_negative": 8,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 16,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 8,
+          "false_positive": 0,
+          "true_negative": 8,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'1'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 3,
+      "dfa_transitions": 4,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 3,
+      "slug": "03_contains_at_least_one_0",
+      "title": "Contain at least one 0",
+      "level": "Level 1 \u2013 Easy",
+      "session_id": "b7d9db97-b80f-4358-9d08-b0d636528e5b",
+      "pos_count": 8,
+      "neg_count": 7,
+      "total": 15,
+      "timings": {
+        "preprocess_csv": 0.0007,
+        "train_model": 0.0026,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0001
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=2)",
+      "first_pass_metrics": {
+        "total_samples": 15,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 8,
+          "false_positive": 0,
+          "true_negative": 7,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 15,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 8,
+          "false_positive": 0,
+          "true_negative": 7,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'0'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 2,
+      "dfa_transitions": 3,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": "Dataset may be too sparse (15 samples for alphabet size 2). Consider providing at least 16 samples for reliable DFA inference.",
+      "status": "PASS"
+    },
+    {
+      "q": 4,
+      "slug": "04_contains_exactly_one_1",
+      "title": "Contain exactly one 1",
+      "level": "Level 1 \u2013 Easy",
+      "session_id": "098431aa-a9da-42d7-abe7-298cdf51e888",
+      "pos_count": 9,
+      "neg_count": 9,
+      "total": 18,
+      "timings": {
+        "preprocess_csv": 0.0005,
+        "train_model": 0.0104,
+        "hitl_answer_1": 0.0,
+        "hitl_answer_2": 0.0108,
+        "hitl_total": 0.0108,
+        "simulate_all": 0.0001
+      },
+      "hitl_questions": [
+        {
+          "question_number": 1,
+          "query_string": "'1101'",
+          "query_index": 1,
+          "total_queries": 2,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        },
+        {
+          "question_number": 2,
+          "query_string": "'1111'",
+          "query_index": 2,
+          "total_queries": 2,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        }
+      ],
+      "hitl_count": 2,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=3)",
+      "first_pass_metrics": {
+        "total_samples": 18,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 9,
+          "false_positive": 0,
+          "true_negative": 9,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 20,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 9,
+          "false_positive": 0,
+          "true_negative": 11,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'1'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 3,
+      "dfa_transitions": 5,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 5,
+      "slug": "05_even_number_of_0s",
+      "title": "Even number of 0s",
+      "level": "Level 1 \u2013 Easy",
+      "session_id": "b50074a9-980f-4caf-b0d9-74f3e11a1fb8",
+      "pos_count": 9,
+      "neg_count": 9,
+      "total": 18,
+      "timings": {
+        "preprocess_csv": 0.0006,
+        "train_model": 0.0041,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=2)",
+      "first_pass_metrics": {
+        "total_samples": 18,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 9,
+          "false_positive": 0,
+          "true_negative": 9,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 18,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 9,
+          "false_positive": 0,
+          "true_negative": 9,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "\u03b5",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 2,
+      "dfa_transitions": 4,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 6,
+      "slug": "06_odd_number_of_1s",
+      "title": "Odd number of 1s",
+      "level": "Level 2 \u2013 Easy to Moderate",
+      "session_id": "74b42ed7-23b1-4508-a5b4-c91d668b6bf1",
+      "pos_count": 10,
+      "neg_count": 10,
+      "total": 20,
+      "timings": {
+        "preprocess_csv": 0.0006,
+        "train_model": 0.0033,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0001
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=2)",
+      "first_pass_metrics": {
+        "total_samples": 20,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 10,
+          "false_positive": 0,
+          "true_negative": 10,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 20,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 10,
+          "false_positive": 0,
+          "true_negative": 10,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'1'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 2,
+      "dfa_transitions": 4,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 7,
+      "slug": "07_ends_with_01",
+      "title": "End with 01",
+      "level": "Level 2 \u2013 Easy to Moderate",
+      "session_id": "da5e4f16-acc7-45e0-b457-13532cbcfdb0",
+      "pos_count": 11,
+      "neg_count": 11,
+      "total": 22,
+      "timings": {
+        "preprocess_csv": 0.0006,
+        "train_model": 0.0447,
+        "hitl_answer_1": 0.0198,
+        "hitl_total": 0.0198,
+        "simulate_all": 0.0001
+      },
+      "hitl_questions": [
+        {
+          "question_number": 1,
+          "query_string": "'0111'",
+          "query_index": 1,
+          "total_queries": 1,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        }
+      ],
+      "hitl_count": 1,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=3)",
+      "first_pass_metrics": {
+        "total_samples": 22,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 0,
+          "true_negative": 11,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 23,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 0,
+          "true_negative": 12,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'01'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 3,
+      "dfa_transitions": 6,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 8,
+      "slug": "08_starts_with_0_and_ends_with_1",
+      "title": "Start with 0 and end with 1",
+      "level": "Level 2 \u2013 Easy to Moderate",
+      "session_id": "4079f779-5218-412f-bafc-204c9f9c3e76",
+      "pos_count": 12,
+      "neg_count": 12,
+      "total": 24,
+      "timings": {
+        "preprocess_csv": 0.0007,
+        "train_model": 0.3384,
+        "hitl_answer_1": 0.0,
+        "hitl_answer_2": 0.1667,
+        "hitl_total": 0.1668,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [
+        {
+          "question_number": 1,
+          "query_string": "'1001'",
+          "query_index": 1,
+          "total_queries": 2,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        },
+        {
+          "question_number": 2,
+          "query_string": "'11001'",
+          "query_index": 2,
+          "total_queries": 2,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        }
+      ],
+      "hitl_count": 2,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=4)",
+      "first_pass_metrics": {
+        "total_samples": 24,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 12,
+          "false_positive": 0,
+          "true_negative": 12,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 26,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 12,
+          "false_positive": 0,
+          "true_negative": 14,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'01'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 4,
+      "dfa_transitions": 7,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 9,
+      "slug": "09_contains_substring_00",
+      "title": "Contain substring 00",
+      "level": "Level 2 \u2013 Easy to Moderate",
+      "session_id": "bd4422df-9c8f-4688-b894-91ee75361024",
+      "pos_count": 11,
+      "neg_count": 11,
+      "total": 22,
+      "timings": {
+        "preprocess_csv": 0.0007,
+        "train_model": 0.0097,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0001
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=3)",
+      "first_pass_metrics": {
+        "total_samples": 22,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 0,
+          "true_negative": 11,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 22,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 0,
+          "true_negative": 11,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 3,
+      "dfa_transitions": 5,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 10,
+      "slug": "10_does_not_contain_substring_11",
+      "title": "Do not contain substring 11",
+      "level": "Level 2 \u2013 Easy to Moderate",
+      "session_id": "958c63cf-397c-4ecd-b1a5-655729102f20",
+      "pos_count": 11,
+      "neg_count": 11,
+      "total": 22,
+      "timings": {
+        "preprocess_csv": 0.0006,
+        "train_model": 0.0089,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0001
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=3)",
+      "first_pass_metrics": {
+        "total_samples": 22,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 0,
+          "true_negative": 11,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 22,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 11,
+          "false_positive": 0,
+          "true_negative": 11,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "\u03b5",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 3,
+      "dfa_transitions": 5,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 11,
+      "slug": "11_even_0s_and_even_1s",
+      "title": "Even 0s and even 1s",
+      "level": "Level 3 \u2013 Moderate",
+      "session_id": "9494a4ca-4cf3-498d-b247-1bab12a7d865",
+      "pos_count": 14,
+      "neg_count": 14,
+      "total": 28,
+      "timings": {
+        "preprocess_csv": 0.0006,
+        "train_model": 0.0041,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "RPNI (State-Merging)",
+      "first_pass_metrics": {
+        "total_samples": 28,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 14,
+          "false_positive": 0,
+          "true_negative": 14,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 28,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 14,
+          "false_positive": 0,
+          "true_negative": 14,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "\u03b5",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 4,
+      "dfa_transitions": 8,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 12,
+      "slug": "12_at_least_two_consecutive_0s",
+      "title": "At least two consecutive 0s",
+      "level": "Level 3 \u2013 Moderate",
+      "session_id": "bea23243-a2ec-4bc5-823d-629cb46fd50c",
+      "pos_count": 12,
+      "neg_count": 12,
+      "total": 24,
+      "timings": {
+        "preprocess_csv": 0.0009,
+        "train_model": 0.0118,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "Exact SAT (Biermann-Feldman, k=3)",
+      "first_pass_metrics": {
+        "total_samples": 24,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 12,
+          "false_positive": 0,
+          "true_negative": 12,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 24,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 12,
+          "false_positive": 0,
+          "true_negative": 12,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 3,
+      "dfa_transitions": 5,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 13,
+      "slug": "13_number_of_1s_divisible_by_3",
+      "title": "Number of 1s divisible by 3",
+      "level": "Level 3 \u2013 Moderate",
+      "session_id": "8bf0c585-ff3a-45ef-8dbd-2da4b6ace15a",
+      "pos_count": 13,
+      "neg_count": 13,
+      "total": 26,
+      "timings": {
+        "preprocess_csv": 0.0007,
+        "train_model": 0.0016,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "RPNI (State-Merging)",
+      "first_pass_metrics": {
+        "total_samples": 26,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 0,
+          "true_negative": 13,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 26,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 0,
+          "true_negative": 13,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "\u03b5",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 3,
+      "dfa_transitions": 6,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 14,
+      "slug": "14_ends_with_101_or_010",
+      "title": "End with 101 or 010",
+      "level": "Level 3 \u2013 Moderate",
+      "session_id": "cccdffd2-dc1f-48da-a984-6ae3fae12e41",
+      "pos_count": 16,
+      "neg_count": 16,
+      "total": 32,
+      "timings": {
+        "preprocess_csv": 0.0006,
+        "train_model": 0.0081,
+        "hitl_answer_1": 6.6482,
+        "hitl_total": 6.6482,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [
+        {
+          "question_number": 1,
+          "query_string": "'0100'",
+          "query_index": 1,
+          "total_queries": 1,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        }
+      ],
+      "hitl_count": 1,
+      "inference_engine": "RPNI (State-Merging)",
+      "first_pass_metrics": {
+        "total_samples": 32,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 16,
+          "false_positive": 0,
+          "true_negative": 16,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 33,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 16,
+          "false_positive": 0,
+          "true_negative": 17,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 7,
+      "dfa_transitions": 14,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 15,
+      "slug": "15_exactly_two_occurrences_of_0",
+      "title": "Exactly two occurrences of 0",
+      "level": "Level 3 \u2013 Moderate",
+      "session_id": "6ec01e4d-291c-4429-a20d-77e486152a48",
+      "pos_count": 13,
+      "neg_count": 13,
+      "total": 26,
+      "timings": {
+        "preprocess_csv": 0.0005,
+        "train_model": 0.0017,
+        "hitl_answer_1": 0.1704,
+        "hitl_total": 0.1704,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [
+        {
+          "question_number": 1,
+          "query_string": "'00000'",
+          "query_index": 1,
+          "total_queries": 1,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        }
+      ],
+      "hitl_count": 1,
+      "inference_engine": "RPNI (State-Merging)",
+      "first_pass_metrics": {
+        "total_samples": 26,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 0,
+          "true_negative": 13,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 27,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 13,
+          "false_positive": 0,
+          "true_negative": 14,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 4,
+      "dfa_transitions": 8,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 16,
+      "slug": "16_even_0s_and_odd_1s",
+      "title": "Even 0s and odd 1s",
+      "level": "Level 4 \u2013 Medium",
+      "session_id": "c4a3772e-9d99-4aa7-aa58-1bd9a392c400",
+      "pos_count": 14,
+      "neg_count": 14,
+      "total": 28,
+      "timings": {
+        "preprocess_csv": 0.0009,
+        "train_model": 0.005,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0003
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "RPNI (State-Merging)",
+      "first_pass_metrics": {
+        "total_samples": 28,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 14,
+          "false_positive": 0,
+          "true_negative": 14,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 28,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 14,
+          "false_positive": 0,
+          "true_negative": 14,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'1'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00010'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 4,
+      "dfa_transitions": 8,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 17,
+      "slug": "17_does_not_contain_substring_010",
+      "title": "Do not contain substring 010",
+      "level": "Level 4 \u2013 Medium",
+      "session_id": "bf7e643c-2237-45d6-9a79-435cc904e250",
+      "pos_count": 14,
+      "neg_count": 14,
+      "total": 28,
+      "timings": {
+        "preprocess_csv": 0.0016,
+        "train_model": 0.0011,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "RPNI (State-Merging)",
+      "first_pass_metrics": {
+        "total_samples": 28,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 14,
+          "false_positive": 0,
+          "true_negative": 14,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 28,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 14,
+          "false_positive": 0,
+          "true_negative": 14,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "\u03b5",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 4,
+      "dfa_transitions": 7,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 18,
+      "slug": "18_binary_value_divisible_by_3",
+      "title": "Binary value divisible by 3",
+      "level": "Level 4 \u2013 Medium",
+      "session_id": "c236dd5e-b817-4264-8447-6b6c4d899d06",
+      "pos_count": 15,
+      "neg_count": 15,
+      "total": 30,
+      "timings": {
+        "preprocess_csv": 0.0005,
+        "train_model": 0.0011,
+        "hitl_answer_1": 0.0604,
+        "hitl_total": 0.0604,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [
+        {
+          "question_number": 1,
+          "query_string": "'10101'",
+          "query_index": 1,
+          "total_queries": 1,
+          "rule_answer": true,
+          "answered_as": "ACCEPT"
+        }
+      ],
+      "hitl_count": 1,
+      "inference_engine": "RPNI (State-Merging)",
+      "first_pass_metrics": {
+        "total_samples": 30,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 15,
+          "false_positive": 0,
+          "true_negative": 15,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 31,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 16,
+          "false_positive": 0,
+          "true_negative": 15,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "\u03b5",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 3,
+      "dfa_transitions": 6,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 19,
+      "slug": "19_contains_both_00_and_11",
+      "title": "Contain both 00 and 11",
+      "level": "Level 4 \u2013 Medium",
+      "session_id": "751e1221-0941-40da-beb8-244db34fb53a",
+      "pos_count": 18,
+      "neg_count": 18,
+      "total": 36,
+      "timings": {
+        "preprocess_csv": 0.0005,
+        "train_model": 0.0094,
+        "hitl_answer_1": 0.0,
+        "hitl_answer_2": 0.0,
+        "hitl_answer_3": 0.0,
+        "hitl_answer_4": 0.0133,
+        "hitl_total": 0.0133,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [
+        {
+          "question_number": 1,
+          "query_string": "'01010011'",
+          "query_index": 1,
+          "total_queries": 4,
+          "rule_answer": true,
+          "answered_as": "ACCEPT"
+        },
+        {
+          "question_number": 2,
+          "query_string": "'0101'",
+          "query_index": 2,
+          "total_queries": 4,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        },
+        {
+          "question_number": 3,
+          "query_string": "'0100'",
+          "query_index": 3,
+          "total_queries": 4,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        },
+        {
+          "question_number": 4,
+          "query_string": "'1011'",
+          "query_index": 4,
+          "total_queries": 4,
+          "rule_answer": false,
+          "answered_as": "REJECT"
+        }
+      ],
+      "hitl_count": 4,
+      "inference_engine": "RPNI (State-Merging)",
+      "first_pass_metrics": {
+        "total_samples": 36,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 18,
+          "false_positive": 0,
+          "true_negative": 18,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 40,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 19,
+          "false_positive": 0,
+          "true_negative": 21,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'0011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11000'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001100'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001110'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 8,
+      "dfa_transitions": 15,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    },
+    {
+      "q": 20,
+      "slug": "20_length_divisible_by_3_and_ends_with_1",
+      "title": "Length divisible by 3 and end with 1",
+      "level": "Level 4 \u2013 Medium",
+      "session_id": "66024b2b-d779-400b-a8e9-d03e181fc16a",
+      "pos_count": 16,
+      "neg_count": 16,
+      "total": 32,
+      "timings": {
+        "preprocess_csv": 0.0007,
+        "train_model": 0.006,
+        "hitl_total": 0.0,
+        "simulate_all": 0.0002
+      },
+      "hitl_questions": [],
+      "hitl_count": 0,
+      "inference_engine": "RPNI (State-Merging)",
+      "first_pass_metrics": {
+        "total_samples": 32,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 16,
+          "false_positive": 0,
+          "true_negative": 16,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "final_metrics": {
+        "total_samples": 32,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "confusion_matrix": {
+          "true_positive": 16,
+          "false_positive": 0,
+          "true_negative": 16,
+          "false_negative": 0
+        },
+        "num_misclassified": 0,
+        "misclassified_samples": []
+      },
+      "api_errors": [],
+      "simulation_results": [
+        {
+          "string": "'001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'001111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010001'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010011'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010101'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010111'",
+          "csv_label": 1,
+          "api_accepted": true,
+          "rule_accepted": true,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "\u03b5",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'1'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'00'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'01'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'10'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'11'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'110'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0000'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0001'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0010'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0011'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        },
+        {
+          "string": "'0100'",
+          "csv_label": 0,
+          "api_accepted": false,
+          "rule_accepted": false,
+          "csv_match": true,
+          "rule_match": true
+        }
+      ],
+      "final_accuracy_csv": 100.0,
+      "final_accuracy_rule": 100.0,
+      "dfa_states": 4,
+      "dfa_transitions": 5,
+      "initial_state": null,
+      "accept_states": [],
+      "data_quality_warning": null,
+      "status": "PASS"
+    }
+  ]
+}

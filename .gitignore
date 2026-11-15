@@ -25,12 +25,13 @@ share/python-wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
+# Virtual environments & Dependencies
 venv/
 env/
 ENV/
 .venv/
 .env
+node_modules/
 
 # IDE / Editor artifacts
 .vscode/
