@@ -11,13 +11,22 @@ const distDir = path.join(frontendDir, 'dist');
 const distAssets = path.join(distDir, 'assets');
 const targetAssets = path.join(frontendDir, 'assets');
 
-if (fs.existsSync(distAssets)) {
+// Clean targetAssets directory to prevent stale cached bundles
+if (fs.existsSync(targetAssets)) {
+  const oldFiles = fs.readdirSync(targetAssets);
+  for (const file of oldFiles) {
+    fs.unlinkSync(path.join(targetAssets, file));
+  }
+} else {
   fs.mkdirSync(targetAssets, { recursive: true });
+}
+
+if (fs.existsSync(distAssets)) {
   const files = fs.readdirSync(distAssets);
   for (const file of files) {
     fs.copyFileSync(path.join(distAssets, file), path.join(targetAssets, file));
   }
-  console.log(`Copied ${files.length} assets to ${targetAssets}`);
+  console.log(`Copied ${files.length} fresh assets to ${targetAssets}`);
 }
 
 // Copy dist/index.html to frontend/index.html

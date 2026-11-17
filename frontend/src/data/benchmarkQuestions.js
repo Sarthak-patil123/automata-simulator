@@ -243,24 +243,52 @@ export const BENCHMARK_QUESTIONS = [
 ];
 
 export const QUICK_SAMPLES = {
+  "ends_with_01": {
+    name: "End with 01",
+    level: "Level 2 – Moderate",
+    sampleString: "101",
+    csv: "string,label\n01,1\n001,1\n101,1\n0001,1\n0101,1\n1001,1\n1101,1\n00001,1\n00101,1\n01001,1\n01101,1\n,0\n0,0\n1,0\n00,0\n10,0\n11,0\n000,0\n010,0\n011,0\n100,0\n110,0\n",
+  },
+  "even_zeros": {
+    name: "Even 0s",
+    level: "Level 1 – Easy",
+    sampleString: "00",
+    csv: "string,label\n,1\n1,1\n00,1\n11,1\n001,1\n010,1\n100,1\n111,1\n0000,1\n0,0\n01,0\n10,0\n000,0\n011,0\n101,0\n110,0\n0001,0\n0010,0\n",
+  },
+  "contains_110": {
+    name: "Contains 110",
+    level: "Level 2 – Moderate",
+    sampleString: "110",
+    csv: "string,label\n110,1\n0110,1\n1110,1\n1100,1\n1101,1\n01100,1\n11100,1\n,0\n0,0\n1,0\n00,0\n01,0\n10,0\n11,0\n000,0\n001,0\n010,0\n011,0\n100,0\n101,0\n",
+  },
+  "equal_01_len2": {
+    name: "Even 0s & Even 1s",
+    level: "Level 3 – Moderate",
+    sampleString: "0011",
+    csv: "string,label\n,1\n00,1\n11,1\n0000,1\n0011,1\n0101,1\n0110,1\n1001,1\n1010,1\n1100,1\n1111,1\n000000,1\n000011,1\n000101,1\n0,0\n1,0\n01,0\n10,0\n000,0\n001,0\n010,0\n011,0\n100,0\n101,0\n110,0\n111,0\n0001,0\n0010,0\n",
+  },
   "ends_with_0": {
     name: "End with 0",
     level: "Level 1 – Easy",
+    sampleString: "10",
     csv: "string,label\n0,1\n00,1\n10,1\n000,1\n010,1\n100,1\n110,1\n0000,1\n,0\n1,0\n01,0\n11,0\n001,0\n011,0\n101,0\n111,0\n",
   },
   "starts_with_1": {
     name: "Start with 1",
     level: "Level 1 – Easy",
+    sampleString: "10",
     csv: "string,label\n1,1\n10,1\n11,1\n100,1\n101,1\n110,1\n111,1\n1000,1\n,0\n0,0\n00,0\n01,0\n000,0\n001,0\n010,0\n011,0\n",
   },
   "contains_at_least_one_0": {
     name: "Contain at least one 0",
     level: "Level 1 – Easy",
+    sampleString: "0",
     csv: "string,label\n0,1\n00,1\n01,1\n10,1\n000,1\n001,1\n010,1\n011,1\n,0\n1,0\n11,0\n111,0\n1111,0\n11111,0\n111111,0\n",
   },
   "contains_exactly_one_1": {
     name: "Contain exactly one 1",
     level: "Level 1 – Easy",
+    sampleString: "010",
     csv: "string,label\n1,1\n01,1\n10,1\n001,1\n010,1\n100,1\n0001,1\n0010,1\n0100,1\n,0\n0,0\n00,0\n11,0\n000,0\n011,0\n101,0\n110,0\n111,0\n",
   },
 };

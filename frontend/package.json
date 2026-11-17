@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/restore-source.js && vite",
-    "build": "vite build && node scripts/sync-dist.js",
+    "build": "node scripts/restore-source.js && vite build && node scripts/sync-dist.js",
     "preview": "vite preview"
   },
   "dependencies": {

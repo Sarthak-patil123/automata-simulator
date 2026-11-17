@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Layers, CheckCircle2, Search, ArrowRight, Tag } from 'lucide-react';
+import { X, Layers, Search, Play } from 'lucide-react';
 import { BENCHMARK_QUESTIONS } from '../data/benchmarkQuestions';
 
 export default function BenchmarkModal({ isOpen, onClose, onSelectBenchmark }) {
@@ -19,47 +19,53 @@ export default function BenchmarkModal({ isOpen, onClose, onSelectBenchmark }) {
     return matchesSearch && matchesLevel;
   });
 
+  const levelStyle = (level) => {
+    if (level.includes('1') || level.toLowerCase().includes('easy')) return 'text-teal-700 bg-teal-50 border-teal-200';
+    if (level.includes('2')) return 'text-sky-700 bg-sky-50 border-sky-200';
+    if (level.includes('3')) return 'text-amber-700 bg-amber-50 border-amber-200';
+    return 'text-rose-700 bg-rose-50 border-rose-200';
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl text-slate-200 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/40 backdrop-blur-xs animate-fade-in">
+      <div className="bg-white border border-zinc-200 rounded-3xl w-full max-w-4xl max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+        <div className="p-5 border-b border-zinc-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-brand-50 border border-brand-200 text-brand-600 flex items-center justify-center">
               <Layers className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <h2 className="font-heading text-lg font-bold text-zinc-900 flex items-center gap-2">
                 Automata Benchmark Suite
-                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-mono">
-                  20 Curated Problems
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 font-mono border border-brand-200">
+                  20 problems
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">
-                Balanced, ground-truth verified regular languages across 4 difficulty levels
+              <p className="text-xs text-zinc-500">
+                Ground-truth regular languages across 4 difficulty levels
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition"
+            className="p-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-zinc-900 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Filter & Search Bar */}
-        <div className="p-4 border-b border-slate-800 bg-slate-900/40 flex items-center justify-between gap-3 flex-wrap">
+        {/* Filter & Search */}
+        <div className="p-4 border-b border-zinc-100 flex items-center justify-between gap-3 flex-wrap bg-zinc-50/50">
           <div className="flex items-center gap-1.5 flex-wrap">
             {levels.map((lvl) => (
               <button
                 key={lvl}
                 onClick={() => setSelectedLevel(lvl)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-                  selectedLevel === lvl
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition border ${selectedLevel === lvl
+                  ? 'bg-brand-600 text-white border-brand-600 font-bold shadow-xs'
+                  : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-900'
+                  }`}
               >
                 {lvl === 'ALL' ? 'All Difficulties' : lvl.replace('Level ', 'L')}
               </button>
@@ -67,60 +73,87 @@ export default function BenchmarkModal({ isOpen, onClose, onSelectBenchmark }) {
           </div>
 
           <div className="relative min-w-[220px]">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search benchmarks..."
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 font-mono"
+              className="w-full bg-white border border-zinc-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-brand-500 font-mono transition"
             />
           </div>
         </div>
 
-        {/* List of Problems */}
-        <div className="flex-1 overflow-y-auto p-5 grid grid-cols-1 md:grid-cols-2 gap-3">
-          {filtered.map((item) => (
-            <div
-              key={item.id}
-              className="bg-slate-950/70 border border-slate-800 hover:border-blue-500/60 rounded-xl p-4 transition group flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950 text-blue-300 font-bold border border-blue-800/60">
-                    Q{item.id < 10 ? `0${item.id}` : item.id}
-                  </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">
-                    {item.level}
-                  </span>
+        {/* Grid of Cards — styled strictly like Screenshot 3 */}
+        <div className="flex-1 overflow-y-auto p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filtered.map((item) => {
+            const isNfa = item.title?.toLowerCase().includes('nfa') || item.slug?.includes('nfa');
+            const machineLabel = isNfa ? 'NFA' : 'DFA';
+            const machineBg = isNfa
+              ? 'bg-sky-50 text-sky-700 border-sky-200'
+              : 'bg-brand-50 text-brand-700 border-brand-200';
+
+            const posStrings = item.csv
+              ? item.csv
+                .split('\n')
+                .slice(1)
+                .filter((r) => r.endsWith(',1'))
+                .map((r) => r.split(',')[0])
+                .filter(Boolean)
+              : [];
+            const tryString = posStrings[0] || '0101';
+
+            return (
+              <div
+                key={item.id}
+                className="bg-white border border-zinc-200 hover:border-brand-300 rounded-2xl p-5 transition flex flex-col justify-between shadow-xs hover:shadow-md group"
+              >
+                <div>
+                  {/* Top badges */}
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md font-mono border ${machineBg}`}>
+                      {machineLabel}
+                    </span>
+                    <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider ${levelStyle(item.level)}`}>
+                      {item.level.split('–')[0]?.trim() || item.level}
+                    </span>
+                  </div>
+
+                  <h3 className="font-heading text-sm font-bold text-zinc-900 group-hover:text-brand-600 transition mb-1.5">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                    {item.description}
+                  </p>
+
+                  {/* TRY row styled after reference */}
+                  <div className="mt-3.5 flex items-center gap-2 bg-zinc-50 border border-zinc-200/80 rounded-xl px-3 py-2 font-mono text-xs text-zinc-800">
+                    <span className="text-zinc-400 font-bold text-[10px] uppercase">TRY</span>
+                    <span className="font-bold tracking-wider">{tryString}</span>
+                  </div>
                 </div>
 
-                <h3 className="text-sm font-bold text-white group-hover:text-blue-300 transition">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-
-              <div className="mt-3.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
-                <span className="text-[11px] text-slate-500">
-                  {item.sampleCount} samples ({item.positiveCount}+ / {item.negativeCount}−)
-                </span>
-
+                {/* Dark Load Button */}
                 <button
                   onClick={() => {
                     onSelectBenchmark(item);
                     onClose();
                   }}
-                  className="px-3 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white border border-blue-500/40 text-xs font-semibold flex items-center gap-1 transition"
+                  className="mt-4 w-full py-2.5 px-4 rounded-xl bg-zinc-900 hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-xs active:scale-95 group-hover:bg-brand-600"
                 >
-                  <span>Load</span>
-                  <ArrowRight className="w-3 h-3" />
+                  <Play className="w-3.5 h-3.5 fill-current text-brand-400 group-hover:text-white" />
+                  <span>Load into canvas</span>
                 </button>
               </div>
+            );
+          })}
+
+          {filtered.length === 0 && (
+            <div className="col-span-2 text-center py-12 text-zinc-400">
+              <Layers className="w-8 h-8 mx-auto mb-2 text-zinc-300" />
+              <p className="text-sm font-semibold">No benchmarks match your search.</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Sparkles, BookOpen, Layers, Check, Copy, Activity } from 'lucide-react';
+import { Layers, BookOpen, Check, Copy } from 'lucide-react';
 
 export default function Header({
   sessionId,
   onOpenBenchmarks,
   onOpenHelp,
-  isBackendHealthy = true,
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -17,65 +16,61 @@ export default function Header({
   };
 
   return (
-    <header className="bg-slate-900 border-b border-slate-800 text-white px-6 py-3.5 sticky top-0 z-40 shadow-lg backdrop-blur-md bg-opacity-95">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         {/* Brand */}
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-mono font-bold text-lg text-white shadow-md shadow-blue-500/20">
+        <div className="flex items-center gap-2.5">
+          {/* δ logo mark */}
+          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center font-mono font-bold text-white text-base shadow-sm shadow-violet-200">
             δ
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold tracking-tight text-white flex items-center gap-1.5">
-                Automata Learning Studio
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-semibold uppercase tracking-wider">
-                  v2.0 Active L*
-                </span>
-              </h1>
-            </div>
-            <p className="text-[11px] text-slate-400 font-medium">
-              Infer, Verify & Simulate Deterministic & Non-Deterministic Finite Automata
-            </p>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-gray-900 tracking-tight">
+              Automata Studio
+            </span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200 font-semibold uppercase tracking-wider">
+              v2 · L*
+            </span>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="flex items-center gap-2.5">
-          {/* Benchmarks Catalog Button */}
+        {/* Nav Actions */}
+        <div className="flex items-center gap-2">
+          {/* Benchmarks */}
           <button
             onClick={onOpenBenchmarks}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition shadow-sm"
-            title="Browse all 20 Benchmark Problems"
+            className="px-3.5 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 text-xs font-semibold flex items-center gap-1.5 transition shadow-sm"
+            title="Browse all 20 benchmark problems"
           >
-            <Layers className="w-3.5 h-3.5 text-blue-400" />
-            <span>Benchmark Catalog (20)</span>
+            <Layers className="w-3.5 h-3.5 text-violet-500" />
+            <span>Benchmarks</span>
           </button>
 
-          {/* Quick Help Guide Button */}
+          {/* Guide */}
           <button
             onClick={onOpenHelp}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition shadow-sm"
+            className="px-3.5 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 text-xs font-semibold flex items-center gap-1.5 transition shadow-sm"
           >
-            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-            <span>Workflow Guide</span>
+            <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+            <span>Guide</span>
           </button>
 
-          {/* Session ID Pill */}
-          <div className="hidden sm:flex items-center gap-1 bg-slate-800/80 border border-slate-700/80 px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400">
-            <span className="text-slate-500">Session:</span>
-            <span className="text-blue-300 font-semibold">{sessionId ? sessionId.slice(0, 8) : 'init'}...</span>
+          {/* Session Pill */}
+          <div className="hidden sm:flex items-center gap-1 bg-gray-50 border border-gray-200 px-2.5 py-1.5 rounded-lg text-[11px] font-mono text-gray-500">
+            <span className="text-gray-400">sess:</span>
+            <span className="text-violet-600 font-semibold">{sessionId ? sessionId.slice(0, 8) : 'init'}…</span>
             <button
               onClick={handleCopySession}
-              className="p-1 hover:text-white transition text-slate-400"
+              className="p-0.5 hover:text-gray-700 transition text-gray-400"
               title="Copy Session ID"
             >
-              {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              {copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
             </button>
           </div>
 
-          {/* Engine Status */}
-          <div className="flex items-center gap-1.5 bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-1 rounded-lg text-[11px] font-mono text-emerald-300">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          {/* Engine badge */}
+          <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg text-[11px] font-mono text-emerald-700">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <span className="hidden md:inline font-semibold">Engine Ready</span>
           </div>
         </div>

@@ -17,14 +17,13 @@ export default function ActiveLearningPanel({
   const [counterexample, setCounterexample] = useState('');
   const [ceError, setCeError] = useState(null);
 
-  // Validate counterexample characters
   const handleCounterexampleChange = (val) => {
     setCounterexample(val);
     setCeError(null);
     if (!val) return;
     for (const ch of val) {
       if (!alphabet.includes(ch)) {
-        setCeError(`Symbol '${ch}' is not in alphabet {${alphabet.join(', ')}}`);
+        setCeError(`Symbol '${ch}' not in alphabet {${alphabet.join(', ')}}`);
         return;
       }
     }
@@ -37,15 +36,15 @@ export default function ActiveLearningPanel({
   };
 
   return (
-    <div className="bg-slate-900/90 border-2 border-blue-500/30 rounded-2xl p-5 shadow-xl text-slate-200">
+    <div className="bg-white border-2 border-violet-200 rounded-2xl p-5 shadow-sm">
       {/* Step Header */}
-      <div className="flex items-center justify-between mb-3.5 pb-2.5 border-b border-slate-800">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-2">
-          <span className="w-5 h-5 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center text-[11px] font-mono font-bold">3</span>
-          Active Learning & Disambiguation (L*)
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-violet-600 flex items-center gap-2">
+          <span className="w-5 h-5 rounded bg-violet-100 text-violet-600 flex items-center justify-center text-[11px] font-mono font-bold">3</span>
+          Active Learning &amp; Disambiguation (L*)
         </h2>
         {inferenceEngine && (
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950/60 text-indigo-300 border border-indigo-700/50">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-violet-50 text-violet-600 border border-violet-200 font-semibold">
             {inferenceEngine}
           </span>
         )}
@@ -54,93 +53,88 @@ export default function ActiveLearningPanel({
       {/* Querying Mode */}
       {hitlMode === 'querying' && hitlQuery && (
         <div className="animate-fadeIn">
-          <div className="flex items-center justify-between mb-2.5">
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-950/40 text-amber-300 border border-amber-800/60 font-mono">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 font-mono">
               🔍 Question {hitlQuery.query_index || (hitlQueryCount + 1)} of {hitlQuery.total_queries || 4}
             </span>
             <button
               onClick={onSkipHitl}
-              className="text-xs text-slate-400 hover:text-white flex items-center gap-1 font-semibold transition"
-              title="Skip remaining questions and finalize immediately"
+              className="text-xs text-gray-400 hover:text-gray-700 flex items-center gap-1 font-semibold transition"
+              title="Skip remaining questions and finalize"
             >
-              <span>Skip & Finalize</span>
-              <FastForward className="w-3.5 h-3.5 text-blue-400" />
+              <span>Skip &amp; Finalize</span>
+              <FastForward className="w-3.5 h-3.5 text-violet-500" />
             </button>
           </div>
 
-          {/* Target Query String Display */}
-          <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 text-center mb-3 shadow-inner">
-            <div className="text-slate-400 text-xs mb-1">
-              Does your target language <strong className="text-slate-200">ACCEPT</strong> this string?
+          {/* Query String Display */}
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center mb-3">
+            <div className="text-gray-500 text-xs mb-1">
+              Does your target language <strong className="text-gray-800">ACCEPT</strong> this string?
             </div>
-            <div className="text-amber-300 font-mono font-extrabold text-2xl tracking-widest my-1 drop-shadow-md">
+            <div className="text-amber-600 font-mono font-extrabold text-2xl tracking-widest my-1">
               {hitlQuery.query_string === '' ? (
-                <span className="text-amber-400 italic font-sans font-normal text-lg">ε (empty string)</span>
+                <span className="text-amber-500 italic font-sans font-normal text-lg">ε (empty string)</span>
               ) : (
                 `"${hitlQuery.query_string}"`
               )}
             </div>
-            <div className="text-[10px] text-slate-500 font-mono">
+            <div className="text-[10px] text-gray-400 font-mono">
               {hitlQuery.query_string === ''
                 ? 'Length 0'
-                : `Length ${hitlQuery.query_string.length} • Symbols: ${[...new Set(hitlQuery.query_string)].join(', ')}`}
+                : `Length ${hitlQuery.query_string.length} · Symbols: ${[...new Set(hitlQuery.query_string)].join(', ')}`}
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* YES / NO Buttons */}
           <div className="grid grid-cols-2 gap-3 mb-2">
             <button
               onClick={() => onAnswerQuery(true)}
-              className="py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition active:scale-95"
+              className="py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm shadow-emerald-200 transition active:scale-95"
             >
               <Check className="w-4 h-4" />
               <span>YES — Accepted</span>
             </button>
-
             <button
               onClick={() => onAnswerQuery(false)}
-              className="py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 transition active:scale-95"
+              className="py-3 px-4 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm shadow-red-200 transition active:scale-95"
             >
               <X className="w-4 h-4" />
               <span>NO — Rejected</span>
             </button>
           </div>
 
-          <div className="text-[10px] text-slate-500 text-center font-mono">
-            {hitlQueryCount} queries answered so far • Hard-capped at 4 maximum
+          <div className="text-[10px] text-gray-400 text-center font-mono">
+            {hitlQueryCount} queries answered · Hard-capped at 4 max
           </div>
         </div>
       )}
 
-      {/* Conjecture Ready Mode */}
+      {/* Conjecture Ready */}
       {hitlMode === 'conjecture_ready' && (
         <div className="animate-fadeIn">
-          <div className="p-3 bg-emerald-950/30 border border-emerald-800/50 rounded-xl mb-3 text-emerald-300 text-xs">
+          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl mb-3 text-emerald-700 text-xs">
             <div className="font-bold flex items-center gap-1.5 text-sm mb-1">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
               <span>Conjecture Hypothesized</span>
             </div>
             <span>
-              The AI synthesized a minimal conjecture after {hitlQueryCount} query answers. Inspect the graph on the right.
+              AI synthesized a minimal conjecture after {hitlQueryCount} query answers. Inspect the graph →
             </span>
           </div>
 
           <button
             onClick={() => onConfirmConjecture(null)}
-            className="w-full py-2.5 px-4 mb-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/30 transition"
+            className="w-full py-2.5 px-4 mb-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm shadow-emerald-200 transition"
           >
             <Check className="w-4 h-4" />
             <span>Yes, This DFA is Correct!</span>
           </button>
 
           {/* Counterexample Section */}
-          <div className="pt-3 border-t border-slate-800">
-            <div className="text-xs font-semibold text-slate-300 mb-1">
-              Found a mistake? Provide a Counterexample:
-            </div>
-            <div className="text-[11px] text-slate-400 mb-2">
-              Enter any string that this conjecture classifies incorrectly:
-            </div>
+          <div className="pt-3 border-t border-gray-100">
+            <div className="text-xs font-semibold text-gray-700 mb-1">Found a mistake? Provide a Counterexample:</div>
+            <div className="text-[11px] text-gray-400 mb-2">Enter any string this conjecture classifies incorrectly:</div>
 
             <div className="flex gap-2 mb-2">
               <input
@@ -148,13 +142,13 @@ export default function ActiveLearningPanel({
                 value={counterexample}
                 onChange={(e) => handleCounterexampleChange(e.target.value)}
                 placeholder="e.g. 0101 (or empty for ε)"
-                className="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
+                className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-mono text-gray-700 focus:outline-none focus:border-violet-400 transition"
               />
               <button
                 onClick={() => handleConfirm(null)}
                 disabled={counterexample === '' || !!ceError}
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg disabled:opacity-40 transition flex items-center gap-1"
-                title="Auto-flip current conjecture's prediction"
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg disabled:opacity-40 transition flex items-center gap-1 border border-gray-200"
+                title="Auto-flip conjecture's prediction"
               >
                 <span>Submit</span>
                 <CornerDownLeft className="w-3 h-3" />
@@ -162,7 +156,7 @@ export default function ActiveLearningPanel({
             </div>
 
             {ceError && (
-              <div className="text-[11px] text-rose-400 mb-2 flex items-center gap-1">
+              <div className="text-[11px] text-red-500 mb-2 flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" />
                 <span>{ceError}</span>
               </div>
@@ -172,13 +166,13 @@ export default function ActiveLearningPanel({
               <div className="grid grid-cols-2 gap-2 mt-2">
                 <button
                   onClick={() => handleConfirm(true)}
-                  className="py-1.5 px-2 bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-800/60 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition"
+                  className="py-1.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition"
                 >
                   <span>➕ Should be ACCEPTED</span>
                 </button>
                 <button
                   onClick={() => handleConfirm(false)}
-                  className="py-1.5 px-2 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition"
+                  className="py-1.5 px-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition"
                 >
                   <span>➖ Should be REJECTED</span>
                 </button>
@@ -187,35 +181,36 @@ export default function ActiveLearningPanel({
           </div>
 
           {hitlFeedback && (
-            <div className="mt-3 p-2 rounded-lg bg-blue-950/40 border border-blue-800/40 text-[11px] text-blue-300">
+            <div className="mt-3 p-2 rounded-lg bg-violet-50 border border-violet-200 text-[11px] text-violet-700">
               ℹ️ {hitlFeedback}
             </div>
           )}
         </div>
       )}
 
-      {/* Converged Celebration Mode */}
+      {/* Converged */}
       {hitlMode === 'converged' && (
-        <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-950/60 to-teal-950/60 border border-emerald-700/60 text-center animate-fadeIn">
-          <div className="w-10 h-10 mx-auto rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2">
-            <CheckCircle2 className="w-6 h-6" />
+        <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 text-center animate-fadeIn">
+          <div className="w-10 h-10 mx-auto rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center mb-2 text-xl">
+            🎉
           </div>
-          <div className="text-base font-extrabold text-emerald-300">
-            🎉 100% Minimal DFA Converged!
+          <div className="font-bold text-emerald-700 text-sm mb-1">Automaton Converged!</div>
+          <div className="text-xs text-emerald-600">
+            Minimal {modelType.toUpperCase()} learned in {hitlQueryCount} membership queries.
           </div>
-          <p className="text-xs text-emerald-200/80 mt-1">
-            Exact minimal representation reached after {hitlQueryCount} queries. Ready for simulation testing below.
-          </p>
+          {modelMetrics?.accuracy != null && (
+            <div className="mt-2 text-xs font-mono text-emerald-700 font-bold">
+              Accuracy: {(modelMetrics.accuracy * 100).toFixed(1)}%
+            </div>
+          )}
         </div>
       )}
 
-      {/* Idle Mode */}
+      {/* Idle (waiting for model) */}
       {hitlMode === 'idle' && (
-        <div className="text-center py-4 text-slate-400 text-xs">
-          <p className="mb-2">Initial model generated from dataset.</p>
-          <p className="text-[11px] text-slate-500">
-            Model is confident and verified with 0 active boundary queries needed.
-          </p>
+        <div className="text-center py-6 text-gray-400">
+          <HelpCircle className="w-8 h-8 mx-auto mb-2 text-gray-200" />
+          <p className="text-xs text-gray-400">Generate a model first to start active learning.</p>
         </div>
       )}
     </div>
