@@ -42,10 +42,10 @@ export const BENCHMARK_QUESTIONS = [
     "title": "Contain exactly one 1",
     "level": "Level 1 \u2013 Easy",
     "description": "Accepts strings over {0, 1} that contain exactly one occurrence of 1.",
-    "csv": "string,label\n1,1\n01,1\n10,1\n001,1\n010,1\n100,1\n0001,1\n0010,1\n0100,1\n,0\n0,0\n00,0\n11,0\n000,0\n011,0\n101,0\n110,0\n111,0\n",
-    "sampleCount": 18,
+    "csv": "string,label\n1,1\n01,1\n10,1\n001,1\n010,1\n100,1\n0001,1\n0010,1\n0100,1\n,0\n0,0\n00,0\n11,0\n000,0\n011,0\n101,0\n110,0\n111,0\n1100,0\n1101,0\n1111,0\n10111,0\n",
+    "sampleCount": 22,
     "positiveCount": 9,
-    "negativeCount": 9,
+    "negativeCount": 13,
     "statesCount": 3
   },
   {
@@ -78,10 +78,10 @@ export const BENCHMARK_QUESTIONS = [
     "title": "End with 01",
     "level": "Level 2 \u2013 Easy to Moderate",
     "description": "Accepts strings over {0, 1} that end with the suffix 01.",
-    "csv": "string,label\n01,1\n001,1\n101,1\n0001,1\n0101,1\n1001,1\n1101,1\n00001,1\n00101,1\n01001,1\n01101,1\n,0\n0,0\n1,0\n00,0\n10,0\n11,0\n000,0\n010,0\n011,0\n100,0\n110,0\n",
-    "sampleCount": 22,
+    "csv": "string,label\n01,1\n001,1\n101,1\n0001,1\n0101,1\n1001,1\n1101,1\n00001,1\n00101,1\n01001,1\n01101,1\n,0\n0,0\n1,0\n00,0\n10,0\n11,0\n000,0\n010,0\n011,0\n100,0\n110,0\n0111,0\n00111,0\n10111,0\n01111,0\n",
+    "sampleCount": 26,
     "positiveCount": 11,
-    "negativeCount": 11,
+    "negativeCount": 15,
     "statesCount": 3
   },
   {
@@ -90,10 +90,10 @@ export const BENCHMARK_QUESTIONS = [
     "title": "Start with 0 and end with 1",
     "level": "Level 2 \u2013 Easy to Moderate",
     "description": "Accepts strings over {0, 1} that start with 0 and end with 1.",
-    "csv": "string,label\n01,1\n001,1\n011,1\n0001,1\n0011,1\n0101,1\n0111,1\n00001,1\n00011,1\n00101,1\n00111,1\n01001,1\n,0\n0,0\n1,0\n00,0\n10,0\n11,0\n000,0\n010,0\n100,0\n101,0\n110,0\n111,0\n",
-    "sampleCount": 24,
+    "csv": "string,label\n01,1\n001,1\n011,1\n0001,1\n0011,1\n0101,1\n0111,1\n00001,1\n00011,1\n00101,1\n00111,1\n01001,1\n,0\n0,0\n1,0\n00,0\n10,0\n11,0\n000,0\n010,0\n100,0\n101,0\n110,0\n111,0\n1001,0\n1000,0\n1010,0\n1101,0\n",
+    "sampleCount": 28,
     "positiveCount": 12,
-    "negativeCount": 12,
+    "negativeCount": 16,
     "statesCount": 4
   },
   {
@@ -162,10 +162,10 @@ export const BENCHMARK_QUESTIONS = [
     "title": "End with 101 or 010",
     "level": "Level 3 \u2013 Moderate",
     "description": "Accepts strings over {0, 1} that terminate in either 101 or 010.",
-    "csv": "string,label\n010,1\n101,1\n0010,1\n0101,1\n1010,1\n1101,1\n00010,1\n00101,1\n01010,1\n01101,1\n10010,1\n10101,1\n11010,1\n11101,1\n000010,1\n000101,1\n,0\n0,0\n1,0\n00,0\n01,0\n10,0\n11,0\n000,0\n001,0\n011,0\n100,0\n110,0\n111,0\n0000,0\n0001,0\n0011,0\n",
-    "sampleCount": 32,
-    "positiveCount": 16,
-    "negativeCount": 16,
+    "csv": "string,label\n010,1\n101,1\n0010,1\n0101,1\n1010,1\n1101,1\n00010,1\n00101,1\n01010,1\n01101,1\n10010,1\n10101,1\n11010,1\n11101,1\n000010,1\n000101,1\n010010,1\n101101,1\n,0\n0,0\n1,0\n00,0\n01,0\n10,0\n11,0\n000,0\n001,0\n011,0\n100,0\n110,0\n111,0\n0000,0\n0001,0\n0011,0\n0100,0\n1011,0\n01000,0\n10111,0\n",
+    "sampleCount": 38,
+    "positiveCount": 18,
+    "negativeCount": 20,
     "statesCount": 7
   },
   {
@@ -174,10 +174,10 @@ export const BENCHMARK_QUESTIONS = [
     "title": "Contain exactly two occurrences of 0",
     "level": "Level 3 \u2013 Moderate",
     "description": "Accepts strings over {0, 1} with exactly two occurrences of 0 anywhere.",
-    "csv": "string,label\n00,1\n001,1\n010,1\n100,1\n0011,1\n0101,1\n0110,1\n1001,1\n1010,1\n1100,1\n00111,1\n01011,1\n01101,1\n,0\n0,0\n1,0\n01,0\n10,0\n11,0\n000,0\n011,0\n101,0\n110,0\n111,0\n0000,0\n0001,0\n",
-    "sampleCount": 26,
+    "csv": "string,label\n00,1\n001,1\n010,1\n100,1\n0011,1\n0101,1\n0110,1\n1001,1\n1010,1\n1100,1\n00111,1\n01011,1\n01101,1\n,0\n0,0\n1,0\n01,0\n10,0\n11,0\n000,0\n011,0\n101,0\n110,0\n111,0\n0000,0\n0001,0\n00000,0\n00010,0\n00100,0\n000000,0\n",
+    "sampleCount": 30,
     "positiveCount": 13,
-    "negativeCount": 13,
+    "negativeCount": 17,
     "statesCount": 4
   },
   {
@@ -222,10 +222,10 @@ export const BENCHMARK_QUESTIONS = [
     "title": "Contain both substrings 00 and 11",
     "level": "Level 4 \u2013 Medium",
     "description": "Accepts strings over {0, 1} containing both '00' and '11' as substrings (in any order).",
-    "csv": "string,label\n0011,1\n1100,1\n00011,1\n00110,1\n00111,1\n01100,1\n10011,1\n11000,1\n11001,1\n11100,1\n000011,1\n000110,1\n000111,1\n001011,1\n001100,1\n001101,1\n001110,1\n001111,1\n,0\n0,0\n1,0\n00,0\n01,0\n10,0\n11,0\n000,0\n001,0\n010,0\n011,0\n100,0\n101,0\n110,0\n111,0\n0000,0\n0001,0\n0010,0\n",
-    "sampleCount": 36,
-    "positiveCount": 18,
-    "negativeCount": 18,
+    "csv": "string,label\n0011,1\n1100,1\n00011,1\n00110,1\n00111,1\n01100,1\n10011,1\n11000,1\n11001,1\n11100,1\n000011,1\n000110,1\n000111,1\n001011,1\n001100,1\n001101,1\n001110,1\n001111,1\n010011,1\n101100,1\n110100,1\n,0\n0,0\n1,0\n00,0\n01,0\n10,0\n11,0\n000,0\n001,0\n010,0\n011,0\n100,0\n101,0\n110,0\n111,0\n0000,0\n0001,0\n0010,0\n0100,0\n1011,0\n0101,0\n1010,0\n01001,0\n10110,0\n",
+    "sampleCount": 45,
+    "positiveCount": 21,
+    "negativeCount": 24,
     "statesCount": 8
   },
   {
@@ -247,7 +247,7 @@ export const QUICK_SAMPLES = {
     name: "End with 01",
     level: "Level 2 – Moderate",
     sampleString: "101",
-    csv: "string,label\n01,1\n001,1\n101,1\n0001,1\n0101,1\n1001,1\n1101,1\n00001,1\n00101,1\n01001,1\n01101,1\n,0\n0,0\n1,0\n00,0\n10,0\n11,0\n000,0\n010,0\n011,0\n100,0\n110,0\n",
+    csv: "string,label\n01,1\n001,1\n101,1\n0001,1\n0101,1\n1001,1\n1101,1\n00001,1\n00101,1\n01001,1\n01101,1\n,0\n0,0\n1,0\n00,0\n10,0\n11,0\n000,0\n010,0\n011,0\n100,0\n110,0\n0111,0\n00111,0\n10111,0\n01111,0\n",
   },
   "even_zeros": {
     name: "Even 0s",
@@ -289,6 +289,6 @@ export const QUICK_SAMPLES = {
     name: "Contain exactly one 1",
     level: "Level 1 – Easy",
     sampleString: "010",
-    csv: "string,label\n1,1\n01,1\n10,1\n001,1\n010,1\n100,1\n0001,1\n0010,1\n0100,1\n,0\n0,0\n00,0\n11,0\n000,0\n011,0\n101,0\n110,0\n111,0\n",
+    csv: "string,label\n1,1\n01,1\n10,1\n001,1\n010,1\n100,1\n0001,1\n0010,1\n0100,1\n,0\n0,0\n00,0\n11,0\n000,0\n011,0\n101,0\n110,0\n111,0\n1100,0\n1101,0\n1111,0\n10111,0\n",
   },
 };

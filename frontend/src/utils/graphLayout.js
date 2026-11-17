@@ -1,93 +1,129 @@
 /**
- * BFS Hierarchical Layout & Edge Routing Algorithms for Finite Automata
+ * Non-Linear Layout & Edge Routing Algorithms for Finite Automata
+ * Ensures no more than 2 nodes ever lie on the same straight line,
+ * completely preventing overlapping edges and collinear arrow conflicts.
  */
 
 /**
- * Computes layered BFS positions for automaton states.
- * Layer 0 = start state (left), Layer 1 = states 1 step away, etc.
- * States within the same layer are centered vertically.
- * Spacing dynamically adapts to node count for spacious, readable layouts.
+ * Computes non-linear positions for automaton states.
+ * - N = 1: Single state centered.
+ * - N = 2: Two states with comfortable horizontal separation.
+ * - N = 3: Clean triangle layout (start at bottom-left, state 1 at top-center, state 2 at bottom-right).
+ * - N >= 4: Regular convex polygon on ellipse (strict guarantee: no 3 points on an ellipse are ever collinear).
  */
 export function computeGraphLayout(graph, options = {}) {
   if (!graph || !graph.nodes || graph.nodes.length === 0) {
     return {};
   }
 
-  const nodeCount = graph.nodes.length;
-  // Dynamic spacious layer width and node height based on node count
-  const defaultLayerWidth = nodeCount <= 3 ? 270 : nodeCount <= 6 ? 240 : 210;
-  const defaultNodeHeight = nodeCount <= 4 ? 180 : 160;
-
   const {
-    layerWidth = defaultLayerWidth,
-    nodeHeight = defaultNodeHeight,
-    paddingX = 100,
-    paddingY = 80,
+    width = 1000,
+    height = 540,
   } = options;
 
-  const startId = graph.initial_state || graph.nodes[0]?.id;
+  const nodes = graph.nodes;
+  const n = nodes.length;
+
+  const startId =
+    graph.initial_state ??
+    graph.start_state ??
+    nodes.find((nd) => nd.is_initial || nd.data?.is_initial)?.id ??
+    nodes[0]?.id;
+
+  // 1. Single State
+  if (n === 1) {
+    return {
+      [nodes[0].id]: { x: Math.round(width / 2), y: Math.round(height / 2) },
+    };
+  }
+
+  // 2. Two States: Side-by-side with generous separation (only 2 nodes total, so at most 2 in line)
+  if (n === 2) {
+    const nonStart = nodes.find((nd) => nd.id !== startId) || nodes[1];
+    return {
+      [startId]: { x: Math.round(width / 2 - 160), y: Math.round(height / 2) },
+      [nonStart.id]: { x: Math.round(width / 2 + 160), y: Math.round(height / 2) },
+    };
+  }
+
+  // Order nodes by BFS starting from initial state for natural visual flow
   const adj = {};
-  graph.nodes.forEach((n) => {
-    adj[n.id] = new Set();
+  nodes.forEach((nd) => {
+    adj[nd.id] = [];
   });
   (graph.edges || []).forEach((e) => {
-    if (adj[e.source]) adj[e.source].add(e.target);
+    if (adj[e.source] && !adj[e.source].includes(e.target)) {
+      adj[e.source].push(e.target);
+    }
   });
 
-  const layers = {};
-  const queue = [startId];
-  layers[startId] = 0;
-  const visited = new Set([startId]);
-
-  while (queue.length > 0) {
-    const curr = queue.shift();
-    const currLayer = layers[curr];
-    for (const next of adj[curr] || []) {
-      if (!visited.has(next)) {
-        visited.add(next);
-        layers[next] = currLayer + 1;
-        queue.push(next);
+  const orderedIds = [];
+  const visited = new Set();
+  if (startId && adj[startId]) {
+    orderedIds.push(startId);
+    visited.add(startId);
+    const queue = [startId];
+    while (queue.length > 0) {
+      const curr = queue.shift();
+      for (const next of adj[curr] || []) {
+        if (!visited.has(next) && adj[next] !== undefined) {
+          visited.add(next);
+          orderedIds.push(next);
+          queue.push(next);
+        }
       }
     }
   }
 
-  // Assign any disconnected states to the last layer or layer 1
-  let maxAssignedLayer = Math.max(...Object.values(layers), 0);
-  graph.nodes.forEach((n) => {
-    if (layers[n.id] === undefined) {
-      maxAssignedLayer++;
-      layers[n.id] = maxAssignedLayer;
+  // Append any unreachable states
+  nodes.forEach((nd) => {
+    if (!visited.has(nd.id)) {
+      visited.add(nd.id);
+      orderedIds.push(nd.id);
     }
   });
 
-  // Group nodes by layer
-  const byLayer = {};
-  graph.nodes.forEach((n) => {
-    const l = layers[n.id];
-    if (!byLayer[l]) byLayer[l] = [];
-    byLayer[l].push(n.id);
-  });
+  // 3. Three States: Distinct Triangle Layout
+  // Start state at bottom-left (260, 340), State 1 at top-center (500, 150), State 2 at bottom-right (740, 340).
+  // Zero collinear 3-tuples: each transition has its own unobstructed corridor.
+  if (n === 3) {
+    return {
+      [orderedIds[0]]: { x: 260, y: 340 },
+      [orderedIds[1]]: { x: 500, y: 150 },
+      [orderedIds[2]]: { x: 740, y: 340 },
+    };
+  }
 
-  const maxInLayer = Math.max(...Object.values(byLayer).map((arr) => arr.length), 1);
-  const totalH = Math.max(maxInLayer * nodeHeight + paddingY * 2, 440);
-  const numLayers = Math.max(maxAssignedLayer, 1);
-  const totalW = numLayers * layerWidth;
-  // Center horizontal layout within a standard 1000px canvas area
-  const baseStartX = Math.max(120, Math.round((1000 - totalW) / 2));
+  // 4. Four States: Diamond Layout
+  // Start at left (240, 270), State 1 at top (500, 125), State 2 at right (760, 270), State 3 at bottom (500, 415).
+  // No 3 nodes are in a line.
+  if (n === 4) {
+    return {
+      [orderedIds[0]]: { x: 240, y: 270 },
+      [orderedIds[1]]: { x: 500, y: 125 },
+      [orderedIds[2]]: { x: 760, y: 270 },
+      [orderedIds[3]]: { x: 500, y: 415 },
+    };
+  }
+
+  // 5. Five or More States: Regular Convex Polygon on Ellipse
+  // By mathematical definition, an ellipse intersects any straight line in at most 2 points.
+  // Hence NO 3 nodes are ever collinear.
+  const cx = Math.round(width / 2);
+  const cy = Math.round(height / 2);
+
+  const rx = Math.min(380, Math.max(250, 180 + n * 20));
+  const ry = Math.min(180, Math.max(130, 95 + n * 12));
 
   const positions = {};
-  Object.entries(byLayer).forEach(([layerStr, ids]) => {
-    const layer = parseInt(layerStr, 10);
-    const x = baseStartX + layer * layerWidth;
-    const blockH = ids.length * nodeHeight;
-    const startY = (totalH - blockH) / 2 + nodeHeight / 2;
+  const step = (2 * Math.PI) / n;
 
-    ids.forEach((id, idx) => {
-      positions[id] = {
-        x,
-        y: startY + idx * nodeHeight,
-      };
-    });
+  orderedIds.forEach((id, idx) => {
+    // Start node placed at angle pi (180 deg, far left) so START arrow enters cleanly from left
+    const angle = Math.PI - idx * step;
+    const x = Math.round(cx + rx * Math.cos(angle));
+    const y = Math.round(cy - ry * Math.sin(angle));
+    positions[id] = { x, y };
   });
 
   return positions;

@@ -61,8 +61,8 @@
   },
   "testcase_summary": {
     "positive_count": 9,
-    "negative_count": 9,
-    "total_samples": 18,
+    "negative_count": 13,
+    "total_samples": 22,
     "csv_file": "04_contains_exactly_one_1.csv"
   }
 }

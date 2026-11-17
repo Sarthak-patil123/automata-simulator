@@ -115,9 +115,9 @@
     "is_minimal": true
   },
   "testcase_summary": {
-    "positive_count": 18,
-    "negative_count": 18,
-    "total_samples": 36,
+    "positive_count": 21,
+    "negative_count": 24,
+    "total_samples": 45,
     "csv_file": "19_contains_both_00_and_11.csv"
   }
 }

@@ -72,8 +72,8 @@
   },
   "testcase_summary": {
     "positive_count": 13,
-    "negative_count": 13,
-    "total_samples": 26,
+    "negative_count": 17,
+    "total_samples": 30,
     "csv_file": "15_exactly_two_occurrences_of_0.csv"
   }
 }

@@ -61,8 +61,8 @@
   },
   "testcase_summary": {
     "positive_count": 11,
-    "negative_count": 11,
-    "total_samples": 22,
+    "negative_count": 15,
+    "total_samples": 26,
     "csv_file": "07_ends_with_01.csv"
   }
 }
