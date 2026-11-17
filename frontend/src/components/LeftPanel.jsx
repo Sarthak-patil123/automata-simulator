@@ -30,6 +30,8 @@ export default function LeftPanel({
   onPreprocess,
   onGenerateModel,
   onSelectPreset,
+  onRunSimulation,
+  setTestString,
   activeKey: propActiveKey,
   isGenerating,
   activeModelType,
@@ -219,6 +221,42 @@ export default function LeftPanel({
                   Negatives: <strong className="text-rose-700">{preprocessed.negative_count}</strong>
                 </span>
               </div>
+
+              {onRunSimulation && (preprocessed.positive_strings?.length > 0 || preprocessed.negative_strings?.length > 0) && (
+                <div className="pt-2 border-t border-zinc-200/60 space-y-1.5">
+                  <div className="text-[10px] font-bold uppercase text-zinc-500 flex items-center justify-between">
+                    <span>Testcases (Click to trace)</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {(preprocessed.positive_strings || []).slice(0, 4).map((str, idx) => (
+                      <button
+                        key={`pos-${idx}`}
+                        onClick={() => {
+                          if (setTestString) setTestString(str);
+                          onRunSimulation(str);
+                        }}
+                        className="px-2 py-0.5 rounded-md bg-teal-100/80 hover:bg-teal-200 text-teal-800 font-mono text-[10px] font-bold border border-teal-300/80 transition"
+                        title={`Positive testcase: trace '${str || 'ε'}'`}
+                      >
+                        ✓ {str === '' ? 'ε' : str}
+                      </button>
+                    ))}
+                    {(preprocessed.negative_strings || []).slice(0, 4).map((str, idx) => (
+                      <button
+                        key={`neg-${idx}`}
+                        onClick={() => {
+                          if (setTestString) setTestString(str);
+                          onRunSimulation(str);
+                        }}
+                        className="px-2 py-0.5 rounded-md bg-rose-100/80 hover:bg-rose-200 text-rose-800 font-mono text-[10px] font-bold border border-rose-300/80 transition"
+                        title={`Negative testcase: trace '${str || 'ε'}'`}
+                      >
+                        ✗ {str === '' ? 'ε' : str}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

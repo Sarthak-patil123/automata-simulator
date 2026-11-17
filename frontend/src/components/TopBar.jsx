@@ -3,6 +3,7 @@ import {
   Play,
   Pause,
   SkipForward,
+  SkipBack,
   RotateCcw,
   CheckCircle2,
   XCircle,
@@ -167,19 +168,27 @@ export default function TopBar({
               <div className="flex items-center gap-1.5 pl-2 border-l border-zinc-800">
                 <button
                   onClick={onPlayPause}
-                  disabled={isFinished}
                   className={`p-1.5 rounded-lg transition ${
                     isPlaying
                       ? 'bg-amber-500 text-zinc-950 font-bold'
-                      : 'bg-brand-600 text-white hover:bg-brand-500 disabled:opacity-40'
+                      : 'bg-brand-600 text-white hover:bg-brand-500'
                   }`}
-                  title={isPlaying ? 'Pause' : 'Play'}
+                  title={isPlaying ? 'Pause' : isFinished ? 'Replay' : 'Play'}
                 >
                   {isPlaying ? (
                     <Pause className="w-3.5 h-3.5 fill-current" />
                   ) : (
                     <Play className="w-3.5 h-3.5 fill-current" />
                   )}
+                </button>
+
+                <button
+                  onClick={onStepPrev}
+                  disabled={currentStepIndex <= 0}
+                  className="p-1.5 hover:bg-zinc-900 rounded-lg text-zinc-300 hover:text-white transition disabled:opacity-30"
+                  title="Step Backward"
+                >
+                  <SkipBack className="w-3.5 h-3.5" />
                 </button>
 
                 <button

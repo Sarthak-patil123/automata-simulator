@@ -110,7 +110,10 @@ export default function App() {
         // Initialize simulation with sample string
         const initTrace = simulateAutomaton(firstGraph, testString, type);
         setSimulationTrace(initTrace);
-        setCurrentStepIndex(initTrace.steps.length - 1);
+        setCurrentStepIndex(0);
+        if (initTrace.steps.length > 1) {
+          setIsPlaying(true);
+        }
       }
       if (firstMetrics) setModelMetrics(firstMetrics);
       if (data.inference_engine) setInferenceEngine(data.inference_engine);
@@ -211,7 +214,10 @@ export default function App() {
       if (firstGraph) {
         const localTrace = simulateAutomaton(firstGraph, sampleStr, modelType);
         setSimulationTrace(localTrace);
-        setCurrentStepIndex(localTrace.steps.length - 1);
+        setCurrentStepIndex(0);
+        if (localTrace.steps.length > 1) {
+          setIsPlaying(true);
+        }
       }
     } catch (err) {
       setErrorMsg(err.message || 'Failed to switch preset.');
@@ -253,7 +259,10 @@ export default function App() {
 
           const initTrace = simulateAutomaton(firstGraph, testString, type);
           setSimulationTrace(initTrace);
-          setCurrentStepIndex(initTrace.steps.length - 1);
+          setCurrentStepIndex(0);
+          if (initTrace.steps.length > 1) {
+            setIsPlaying(true);
+          }
         }
         if (firstMetrics) setModelMetrics(firstMetrics);
         if (data.inference_engine) setInferenceEngine(data.inference_engine);
@@ -286,7 +295,10 @@ export default function App() {
         if (graphData) {
           const initTrace = simulateAutomaton(graphData, testString, type);
           setSimulationTrace(initTrace);
-          setCurrentStepIndex(initTrace.steps.length - 1);
+          setCurrentStepIndex(0);
+          if (initTrace.steps.length > 1) {
+            setIsPlaying(true);
+          }
         }
       } finally {
         setIsGenerating(false);
@@ -296,7 +308,10 @@ export default function App() {
       if (graphData) {
         const initTrace = simulateAutomaton(graphData, testString, type);
         setSimulationTrace(initTrace);
-        setCurrentStepIndex(initTrace.steps.length - 1);
+        setCurrentStepIndex(0);
+        if (initTrace.steps.length > 1) {
+          setIsPlaying(true);
+        }
       }
       setIsGenerating(false);
     }
@@ -332,34 +347,21 @@ export default function App() {
     }
   };
 
-  // Simulation Runner (Fixes Issue #4: Mathematically verified & animated execution)
-  const handleRunSimulation = async (str) => {
+  // Simulation Runner - Pure frontend mathematically verified execution
+  const handleRunSimulation = (str) => {
     if (!graphData) return;
     setIsPlaying(false);
 
     const cleanStr = str != null ? String(str).trim() : '';
 
-    // Direct mathematically verified simulation based on the active graphData
+    // Direct mathematically verified simulation based strictly on the active graphData
     const localTrace = simulateAutomaton(graphData, cleanStr, modelType);
     setSimulationTrace(localTrace);
     setCurrentStepIndex(0);
 
-    // Auto-play trace if multi-step so user watches the tape read
+    // Auto-play trace if multi-step so user watches the tape read and graph traversal
     if (localTrace.steps.length > 1) {
       setIsPlaying(true);
-    }
-
-    // Attempt backend simulation sync
-    try {
-      const backendTrace = await api.simulateString(sessionId, cleanStr);
-      if (backendTrace && backendTrace.steps) {
-        setSimulationTrace({
-          ...backendTrace,
-          tape: cleanStr ? cleanStr.split('') : [],
-        });
-      }
-    } catch (err) {
-      // Local verified trace is already active
     }
   };
 
@@ -387,7 +389,16 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [isPlaying, currentStepIndex, simulationTrace, playbackSpeed]);
 
-  const handlePlayPause = () => setIsPlaying((p) => !p);
+  const handlePlayPause = () => {
+    if (!simulationTrace) return;
+    const maxStep = simulationTrace.steps.length - 1;
+    if (currentStepIndex >= maxStep) {
+      setCurrentStepIndex(0);
+      setIsPlaying(true);
+    } else {
+      setIsPlaying((p) => !p);
+    }
+  };
   const handleStepNext = () => {
     if (simulationTrace && currentStepIndex < simulationTrace.steps.length - 1) {
       setCurrentStepIndex((p) => p + 1);
@@ -456,7 +467,10 @@ export default function App() {
       if (firstGraph) {
         const localTrace = simulateAutomaton(firstGraph, testStr, targetType);
         setSimulationTrace(localTrace);
-        setCurrentStepIndex(localTrace.steps.length - 1);
+        setCurrentStepIndex(0);
+        if (localTrace.steps.length > 1) {
+          setIsPlaying(true);
+        }
       }
     } catch (err) {
       setErrorMsg(err.message || 'Failed to load benchmark into canvas.');
@@ -581,6 +595,8 @@ export default function App() {
                 onPreprocess={handlePreprocess}
                 onGenerateModel={handleGenerateModel}
                 onSelectPreset={handleSelectPreset}
+                onRunSimulation={handleRunSimulation}
+                setTestString={setTestString}
                 activeKey={activePresetKey}
                 isGenerating={isGenerating}
                 activeModelType={modelType}
@@ -610,6 +626,7 @@ export default function App() {
               activeStates={activeStates}
               activeEdgeId={activeEdgeId}
               activeEdgeIds={activeEdgeIds}
+              currentStep={currentStep}
               inferenceEngine={inferenceEngine}
               isConverged={hitlMode === 'converged'}
               automatonType={modelType.toUpperCase()}
@@ -622,6 +639,7 @@ export default function App() {
               <RightPanel
                 graphData={graphData}
                 activeState={activeState}
+                fromState={currentStep?.from_state}
                 consumedSymbol={consumedSymbol}
                 modelMetrics={modelMetrics}
                 inferenceEngine={inferenceEngine}

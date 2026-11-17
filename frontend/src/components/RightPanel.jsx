@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, BarChart3, Zap, Activity, X } from 'lucide-react';
+import { getEdgeSymbols, getStateId } from '../utils/simulation';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    RIGHT PANEL — Transition Table δ(q, σ) + Metrics Inspector
@@ -7,6 +8,7 @@ import { Table, BarChart3, Zap, Activity, X } from 'lucide-react';
 export default function RightPanel({
   graphData,
   activeState,
+  fromState,
   consumedSymbol,
   modelMetrics,
   inferenceEngine,
@@ -22,23 +24,25 @@ export default function RightPanel({
   // Build transition map delta[state][symbol]
   const delta = {};
   nodes.forEach((n) => {
-    delta[n.id] = {};
+    const sId = getStateId(n.id);
+    delta[sId] = {};
     alphabet.forEach((sym) => {
-      delta[n.id][sym] = automatonType === 'NFA' ? [] : '—';
+      delta[sId][sym] = automatonType === 'NFA' ? [] : '—';
     });
   });
 
   edges.forEach((e) => {
-    const rawSymbols = (e.combined_label || e.symbol || '').split(',');
-    rawSymbols.forEach((rawSym) => {
-      const sym = rawSym.trim();
-      if (delta[e.source] && delta[e.source][sym] !== undefined) {
+    const sId = getStateId(e.source);
+    const tId = getStateId(e.target);
+    const syms = getEdgeSymbols(e);
+    syms.forEach((sym) => {
+      if (delta[sId] && delta[sId][sym] !== undefined) {
         if (automatonType === 'NFA') {
-          if (!delta[e.source][sym].includes(e.target)) {
-            delta[e.source][sym].push(e.target);
+          if (!delta[sId][sym].includes(tId)) {
+            delta[sId][sym].push(tId);
           }
         } else {
-          delta[e.source][sym] = e.target;
+          delta[sId][sym] = tId;
         }
       }
     });
@@ -193,7 +197,11 @@ export default function RightPanel({
 
                           {alphabet.map((sym) => {
                             const target = delta[node.id]?.[sym];
-                            const isCellActive = isRowActive && consumedSymbol === sym;
+                            const isCellActive =
+                              (fromState != null
+                                ? node.id === fromState || String(node.id) === String(fromState)
+                                : isRowActive) &&
+                              String(consumedSymbol) === String(sym);
                             let display = '—';
                             if (automatonType === 'NFA') {
                               display = Array.isArray(target) && target.length > 0 ? `{${target.join(',')}}` : '∅';

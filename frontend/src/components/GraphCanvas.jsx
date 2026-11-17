@@ -11,6 +11,7 @@ import {
   X,
 } from 'lucide-react';
 import { calculateEdgePath } from '../utils/graphLayout';
+import { edgeMatchesSymbol, getStateId } from '../utils/simulation';
 
 export default function GraphCanvas({
   graphData,
@@ -21,6 +22,7 @@ export default function GraphCanvas({
   activeStates = [],
   activeEdgeId,
   activeEdgeIds = [],
+  currentStep,
   inferenceEngine,
   isConverged = false,
   automatonType = 'DFA',
@@ -44,17 +46,48 @@ export default function GraphCanvas({
 
   const nodes = graphData?.nodes || [];
   const edges = graphData?.edges || [];
-  const startStateId = graphData?.initial_state;
-  const acceptStateIds = new Set(graphData?.accepting_states || []);
+  const startStateId = getStateId(
+    graphData?.initial_state ??
+    graphData?.start_state ??
+    nodes.find((n) => n.is_initial || n.data?.is_initial)?.id ??
+    nodes[0]?.id
+  );
+
+  const acceptStateIds = new Set();
+  const rawAccepting = graphData?.accepting_states || graphData?.accept_states || [];
+  if (Array.isArray(rawAccepting)) {
+    rawAccepting.forEach((s) => {
+      const id = getStateId(s);
+      if (id) acceptStateIds.add(id);
+    });
+  } else if (rawAccepting instanceof Set) {
+    rawAccepting.forEach((s) => {
+      const id = getStateId(s);
+      if (id) acceptStateIds.add(id);
+    });
+  }
+  nodes.forEach((n) => {
+    if (n && (n.is_accepting || n.data?.is_accepting)) {
+      const id = getStateId(n.id || n.label);
+      if (id) acceptStateIds.add(id);
+    }
+  });
 
   // Compute active state set (supports single state or multiple for NFA)
-  const currentActiveSet = new Set(
+  const currentActiveSet = new Set();
+  const rawActive =
     activeStates.length > 0
       ? activeStates
       : activeState
       ? [activeState]
-      : []
-  );
+      : [];
+  rawActive.forEach((s) => {
+    const id = getStateId(s);
+    if (id) {
+      currentActiveSet.add(id);
+      currentActiveSet.add(String(id));
+    }
+  });
 
   // Compute active edges set
   const currentActiveEdgeSet = new Set(
@@ -341,11 +374,26 @@ export default function GraphCanvas({
       );
       if (!pathData || !pathData.d) return null;
 
-      const edgeKey = `${edge.source}->${edge.target}`;
+      const sId = getStateId(edge.source);
+      const tId = getStateId(edge.target);
+      const edgeKey = `${sId}->${tId}`;
+      const eId = edge.id ? String(edge.id) : '';
+
+      const isStepMatch = Boolean(
+        currentStep &&
+        currentStep.from_state != null &&
+        currentStep.to_state != null &&
+        getStateId(currentStep.from_state) === sId &&
+        getStateId(currentStep.to_state) === tId &&
+        (currentStep.consumed_symbol == null || edgeMatchesSymbol(edge, currentStep.consumed_symbol))
+      );
+
       const isActive =
+        isStepMatch ||
         currentActiveEdgeSet.has(edgeKey) ||
-        currentActiveEdgeSet.has(edge.id) ||
-        (activeEdgeId && (edgeKey === activeEdgeId || edge.id === activeEdgeId));
+        currentActiveEdgeSet.has(eId) ||
+        currentActiveEdgeSet.has(`e_${sId}_${tId}`) ||
+        (activeEdgeId && (edgeKey === activeEdgeId || eId === activeEdgeId));
 
       const labelText =
         edge.label ||
@@ -627,10 +675,25 @@ export default function GraphCanvas({
                   const pos = nodePositions[node.id];
                   if (!pos) return null;
 
-                  const isInitial = node.id === startStateId;
-                  const isAccept = acceptStateIds.has(node.id);
-                  const isActive = currentActiveSet.has(node.id);
-                  const isSelected = node.id === selectedNodeId;
+                  const nId = getStateId(node.id);
+                  const nLabel = getStateId(node.label);
+
+                  const isInitial =
+                    nId === startStateId ||
+                    nLabel === startStateId ||
+                    Boolean(node.is_initial || node.data?.is_initial);
+
+                  const isAccept =
+                    acceptStateIds.has(nId) ||
+                    (nLabel && acceptStateIds.has(nLabel)) ||
+                    Boolean(node.is_accepting || node.data?.is_accepting);
+
+                  const isActive =
+                    currentActiveSet.has(nId) ||
+                    (nLabel && currentActiveSet.has(nLabel)) ||
+                    currentActiveSet.has(node.id);
+
+                  const isSelected = node.id === selectedNodeId || nId === selectedNodeId;
 
                   const nodeFill = isActive
                     ? '#eef2ff'
