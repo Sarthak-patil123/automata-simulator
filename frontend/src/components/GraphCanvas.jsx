@@ -379,12 +379,23 @@ export default function GraphCanvas({
       const edgeKey = `${sId}->${tId}`;
       const eId = edge.id ? String(edge.id) : '';
 
+      const stepFromStates = currentStep?.from_states?.length
+        ? currentStep.from_states
+        : currentStep?.from_state != null
+        ? [currentStep.from_state]
+        : [];
+      const stepToStates = currentStep?.to_states?.length
+        ? currentStep.to_states
+        : currentStep?.to_state != null
+        ? [currentStep.to_state]
+        : [];
+
       const isStepMatch = Boolean(
         currentStep &&
-        currentStep.from_state != null &&
-        currentStep.to_state != null &&
-        getStateId(currentStep.from_state) === sId &&
-        getStateId(currentStep.to_state) === tId &&
+        stepFromStates.length > 0 &&
+        stepToStates.length > 0 &&
+        stepFromStates.some((s) => getStateId(s) === sId) &&
+        stepToStates.some((t) => getStateId(t) === tId) &&
         (currentStep.consumed_symbol == null || edgeMatchesSymbol(edge, currentStep.consumed_symbol))
       );
 

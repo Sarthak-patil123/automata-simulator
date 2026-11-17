@@ -1,23 +1,32 @@
 /**
  * Mathematically Verified Automata Simulation Engine
  * Executes exact step-by-step state machine transitions for DFA and NFA.
- * Supports individual symbol edges, multi-symbol edge labels, canonical state aliases,
- * formal transition maps, and epsilon closures.
+ * Strictly follows the edges present in the graph:
+ * - DFA: Starts from starting node. Moves strictly according to matching available edge.
+ *   If no path is available, the traversal ends immediately and rejects.
+ * - NFA: Starts from starting node. For each symbol, moves to all targets reachable
+ *   via available matching paths. If no path is available from any active node,
+ *   the traversal ends immediately and rejects.
  */
 
 /**
- * Extracts a normalized string ID from a node or state representation
+ * Normalizes a state ID to a clean string
  */
-export function getStateId(val) {
+export function normalizeStateId(val) {
   if (val == null) return '';
   if (typeof val === 'object') {
-    return String(val.id ?? val.name ?? val.label ?? '').trim();
+    return String(val.id ?? val.label ?? val.name ?? '').trim();
   }
   return String(val).trim();
 }
 
 /**
- * Extracts all specific symbols that an edge transitions on.
+ * Backward compatibility alias for normalizeStateId
+ */
+export const getStateId = normalizeStateId;
+
+/**
+ * Extracts specific symbols belonging to an edge.
  * Priority order:
  * 1. edge.symbol (authoritative for single-symbol transitions)
  * 2. edge.symbols / edge.data.symbols (authoritative array)
@@ -27,7 +36,7 @@ export function getStateId(val) {
 export function getEdgeSymbols(edge) {
   if (!edge) return [];
 
-  // 1. Explicit specific symbol property is authoritative for this edge!
+  // 1. Explicit specific symbol property is authoritative for this edge
   if (edge.symbol != null && String(edge.symbol).trim() !== '') {
     return [String(edge.symbol).trim()];
   }
@@ -72,15 +81,10 @@ export function edgeMatchesSymbol(edge, symbol) {
   if (!edge) return false;
   const symStr = symbol == null ? '' : String(symbol).trim();
 
-  // Epsilon check
-  const isEpsSymbol =
-    symStr === 'ε' ||
-    symStr === 'eps' ||
-    symStr === 'epsilon' ||
-    symStr === '' ||
-    symStr === 'λ';
+  const isExplicitEpsilon =
+    symStr === 'ε' || symStr === 'eps' || symStr === 'epsilon' || symStr === 'λ';
 
-  if (isEpsSymbol && (edge.is_epsilon || edge.epsilon)) {
+  if (isExplicitEpsilon && (edge.is_epsilon || edge.epsilon)) {
     return true;
   }
 
@@ -91,8 +95,8 @@ export function edgeMatchesSymbol(edge, symbol) {
   }
 
   if (
-    isEpsSymbol &&
-    syms.some((s) => s === 'ε' || s === 'eps' || s === 'epsilon' || s === 'λ' || s === '')
+    isExplicitEpsilon &&
+    syms.some((s) => s === 'ε' || s === 'eps' || s === 'epsilon' || s === 'λ')
   ) {
     return true;
   }
@@ -102,7 +106,9 @@ export function edgeMatchesSymbol(edge, symbol) {
 
 /**
  * Simulates automaton execution on an input string.
- * Traces states and transitions purely in the frontend.
+ * Strictly adheres to graph edges:
+ * - Moves if path exists.
+ * - Ends and rejects if no path exists.
  */
 export function simulateAutomaton(graphData, inputString = '', automatonType = 'DFA') {
   if (!graphData || !graphData.nodes || graphData.nodes.length === 0) {
@@ -115,23 +121,24 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
     };
   }
 
-  // 1. Build Canonical State Mapping (maps both node.id and node.label to canonical state ID)
+  // 1. Build Canonical State Mapping (maps node.id, node.label, and data attributes to consistent canon ID)
   const canonicalStateMap = new Map();
   (graphData.nodes || []).forEach((n, idx) => {
     if (!n) return;
-    const nId = getStateId(n.id ?? n);
-    const nLabel = getStateId(n.label ?? n.data?.label);
+    const nId = normalizeStateId(n.id ?? n);
+    const nLabel = normalizeStateId(n.label ?? n.data?.label);
+    const nDataId = normalizeStateId(n.data?.id);
     const canon = nId || nLabel || `q${idx}`;
     if (nId) canonicalStateMap.set(nId, canon);
     if (nLabel) canonicalStateMap.set(nLabel, canon);
-    if (n.data?.id) canonicalStateMap.set(getStateId(n.data.id), canon);
+    if (nDataId) canonicalStateMap.set(nDataId, canon);
   });
   const toCanon = (s) => {
-    const str = getStateId(s);
+    const str = normalizeStateId(s);
     return canonicalStateMap.get(str) || str;
   };
 
-  // 2. Resolve Canonical Start State
+  // 2. Resolve Start State
   const resolveStartState = () => {
     if (graphData.initial_state != null && String(graphData.initial_state).trim() !== '') {
       return toCanon(graphData.initial_state);
@@ -142,13 +149,13 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
     const initialNode = (graphData.nodes || []).find(
       (n) => n && (n.is_initial || n.data?.is_initial)
     );
-    if (initialNode) return toCanon(initialNode.id || initialNode.label);
-    return toCanon(graphData.nodes?.[0]?.id || graphData.nodes?.[0]);
+    if (initialNode) return toCanon(initialNode.id ?? initialNode.label);
+    return toCanon(graphData.nodes?.[0]?.id ?? graphData.nodes?.[0]);
   };
 
   const startState = resolveStartState();
 
-  // 3. Resolve Canonical Accepting States
+  // 3. Resolve Accepting States
   const acceptSet = new Set();
   const rawAccepting =
     graphData.accepting_states ||
@@ -169,29 +176,31 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
 
   (graphData.nodes || []).forEach((n) => {
     if (n && (n.is_accepting || n.data?.is_accepting)) {
-      const id = toCanon(n.id || n.label);
+      const id = toCanon(n.id ?? n.label);
       if (id) acceptSet.add(id);
     }
   });
 
   const edges = graphData.edges || [];
-  const alphabet = graphData.alphabet || ['0', '1'];
-  const hasSpaceInAlphabet = alphabet.includes(' ');
-  const cleanInput = inputString != null
-    ? (hasSpaceInAlphabet ? String(inputString) : String(inputString).trim())
-    : '';
+  const rawInput = inputString != null ? String(inputString).trim() : '';
+  // Treat ε or λ as empty input string
+  const cleanInput = (rawInput === 'ε' || rawInput === 'λ' || rawInput === 'eps' || rawInput === 'epsilon') ? '' : rawInput;
   const tape = cleanInput ? cleanInput.split('') : [];
   const isNfa = String(automatonType).toUpperCase() === 'NFA';
 
   if (!isNfa) {
-    // ── DFA SIMULATION ────────────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════════
+    // DFA SIMULATION: Start at startState, move strictly if an edge exists
+    // ══════════════════════════════════════════════════════════════════════════
     const steps = [
       {
         step: 0,
         consumed_symbol: null,
         remaining_tape: cleanInput,
         from_state: null,
-        to_state: startState,
+        to_state: startState || null,
+        from_states: [],
+        to_states: startState ? [startState] : [],
         active_states: startState ? [startState] : [],
         traversed_edge_ids: [],
         traversed_edge: null,
@@ -205,34 +214,14 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
     for (let i = 0; i < cleanInput.length; i++) {
       const char = cleanInput[i];
 
-      // Find matching edge from current canonical state
-      let matchingEdge = edges.find((e) => {
+      // Find an available edge from the current node matching this symbol
+      const matchingEdge = edges.find((e) => {
         const sId = toCanon(e.source);
         return sId === current && edgeMatchesSymbol(e, char);
       });
 
-      // Secondary lookup: check graphData.transitions dictionary if available
-      let nextState = null;
-      if (matchingEdge) {
-        nextState = toCanon(matchingEdge.target);
-      } else if (graphData.transitions) {
-        const key1 = `${current},${char}`;
-        const key2 = `${current}, ${char}`;
-        const tgt =
-          graphData.transitions[key1] ||
-          graphData.transitions[key2] ||
-          graphData.transitions[current]?.[char];
-        if (tgt != null) nextState = toCanon(tgt);
-      } else if (graphData.formal_definition?.transitions) {
-        const key1 = `${current},${char}`;
-        const key2 = `${current}, ${char}`;
-        const tgt =
-          graphData.formal_definition.transitions[key1] ||
-          graphData.formal_definition.transitions[key2];
-        if (tgt != null) nextState = toCanon(tgt);
-      }
-
-      if (!nextState) {
+      // IF NO PATH AVAILABLE: END IMMEDIATELY AND REJECT (NEVER JUMP!)
+      if (!matchingEdge) {
         isStuck = true;
         steps.push({
           step: i + 1,
@@ -240,6 +229,8 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
           remaining_tape: cleanInput.slice(i + 1),
           from_state: current,
           to_state: null,
+          from_states: current ? [current] : [],
+          to_states: [],
           active_states: [],
           traversed_edge_ids: [],
           traversed_edge: null,
@@ -248,15 +239,16 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
         break;
       }
 
+      // Path is available: move along the edge to target node
+      const nextState = toCanon(matchingEdge.target);
       const edgeKey = `${current}->${nextState}`;
-      const edgeId = matchingEdge?.id || `e_${current}_${nextState}`;
+      const edgeId = matchingEdge.id || `e_${current}_${nextState}`;
 
       const traversedEdgeIds = [
         edgeKey,
         edgeId,
         `e_${current}_${nextState}`,
         `e_${current}_${nextState}_${char}`,
-        `${current}->${nextState}`,
       ];
 
       steps.push({
@@ -265,9 +257,11 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
         remaining_tape: cleanInput.slice(i + 1),
         from_state: current,
         to_state: nextState,
+        from_states: current ? [current] : [],
+        to_states: nextState ? [nextState] : [],
         active_states: [nextState],
         traversed_edge_ids: traversedEdgeIds,
-        traversed_edge: matchingEdge || { source: current, target: nextState, symbol: char },
+        traversed_edge: matchingEdge,
         status: 'TRANSITION',
       });
 
@@ -286,15 +280,22 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
       tape,
     };
   } else {
-    // ── NFA SIMULATION ────────────────────────────────────────────────────────
-    const getEpsilonClosure = (states) => {
-      const closure = new Set(states);
-      const queue = Array.from(states);
+    // ══════════════════════════════════════════════════════════════════════════
+    // NFA SIMULATION: Start at startState, move to all reachable targets
+    // ══════════════════════════════════════════════════════════════════════════
+    const hasEpsilonEdges = edges.some(
+      (e) => e.is_epsilon || e.epsilon || getEdgeSymbols(e).some((s) => s === 'ε' || s === 'λ')
+    );
+
+    const getEpsilonClosure = (stateSet) => {
+      if (!hasEpsilonEdges) return stateSet;
+      const closure = new Set(stateSet);
+      const queue = Array.from(stateSet);
       while (queue.length > 0) {
         const s = queue.shift();
         edges.forEach((e) => {
           const sId = toCanon(e.source);
-          if (sId === s && (edgeMatchesSymbol(e, 'ε') || edgeMatchesSymbol(e, ''))) {
+          if (sId === s && edgeMatchesSymbol(e, 'ε')) {
             const tId = toCanon(e.target);
             if (tId && !closure.has(tId)) {
               closure.add(tId);
@@ -306,7 +307,7 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
       return closure;
     };
 
-    let current = getEpsilonClosure(new Set(startState ? [startState] : []));
+    let currentStates = getEpsilonClosure(new Set(startState ? [startState] : []));
 
     const steps = [
       {
@@ -314,10 +315,11 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
         consumed_symbol: null,
         remaining_tape: cleanInput,
         from_state: null,
-        to_state: null,
-        active_states: Array.from(current).sort(),
+        to_state: startState || null,
+        from_states: [],
+        to_states: Array.from(currentStates).sort(),
+        active_states: Array.from(currentStates).sort(),
         traversed_edge_ids: [],
-        traversed_edge: null,
         status: 'INITIAL',
       },
     ];
@@ -326,64 +328,71 @@ export function simulateAutomaton(graphData, inputString = '', automatonType = '
 
     for (let i = 0; i < cleanInput.length; i++) {
       const char = cleanInput[i];
-      const traversedEdges = [];
-      const directTargets = new Set();
+      const traversedEdgeIds = [];
+      const nextTargets = new Set();
+      const prevActiveList = Array.from(currentStates).sort();
 
-      current.forEach((s) => {
+      currentStates.forEach((s) => {
         edges.forEach((e) => {
           const sId = toCanon(e.source);
           if (sId === s && edgeMatchesSymbol(e, char)) {
             const tId = toCanon(e.target);
-            const edgeKey = `${sId}->${tId}`;
-            traversedEdges.push(edgeKey);
-            if (e.id) traversedEdges.push(e.id);
-            traversedEdges.push(`e_${sId}_${tId}`);
-            traversedEdges.push(`e_${sId}_${tId}_${char}`);
-            if (tId) directTargets.add(tId);
+            if (tId) {
+              nextTargets.add(tId);
+              traversedEdgeIds.push(`${sId}->${tId}`);
+              if (e.id) traversedEdgeIds.push(e.id);
+              traversedEdgeIds.push(`e_${sId}_${tId}`);
+              traversedEdgeIds.push(`e_${sId}_${tId}_${char}`);
+            }
           }
         });
       });
 
-      const nextCurrent = getEpsilonClosure(directTargets);
+      const nextClosure = getEpsilonClosure(nextTargets);
 
-      if (nextCurrent.size === 0) {
+      // IF NO PATH AVAILABLE: END IMMEDIATELY AND REJECT (NEVER JUMP!)
+      if (nextClosure.size === 0) {
         isStuck = true;
         steps.push({
           step: i + 1,
           consumed_symbol: char,
           remaining_tape: cleanInput.slice(i + 1),
-          from_state: Array.from(current),
-          to_state: [],
+          from_state: prevActiveList[0] || null,
+          to_state: null,
+          from_states: prevActiveList,
+          to_states: [],
           active_states: [],
-          traversed_edge_ids: traversedEdges,
-          traversed_edge: null,
+          traversed_edge_ids: [],
           status: 'DEAD_END',
         });
-        current = new Set();
+        currentStates = new Set();
         break;
       }
 
-      current = nextCurrent;
+      currentStates = nextClosure;
+      const newActiveList = Array.from(currentStates).sort();
+
       steps.push({
         step: i + 1,
         consumed_symbol: char,
         remaining_tape: cleanInput.slice(i + 1),
-        from_state: Array.from(current),
-        to_state: Array.from(nextCurrent).sort(),
-        active_states: Array.from(current).sort(),
-        traversed_edge_ids: traversedEdges,
-        traversed_edge: null,
+        from_state: prevActiveList[0] || null,
+        to_state: newActiveList[0] || null,
+        from_states: prevActiveList,
+        to_states: newActiveList,
+        active_states: newActiveList,
+        traversed_edge_ids: traversedEdgeIds,
         status: 'TRANSITION',
       });
     }
 
-    const accepted = Array.from(current).some((s) => acceptSet.has(s));
+    const accepted = !isStuck && Array.from(currentStates).some((s) => acceptSet.has(s));
 
     return {
       input_string: cleanInput,
       accepted,
       is_stuck: isStuck,
-      final_active_states: Array.from(current).sort(),
+      final_active_states: Array.from(currentStates).sort(),
       steps,
       tape,
     };

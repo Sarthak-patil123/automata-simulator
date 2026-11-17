@@ -230,7 +230,11 @@ export default function TopBar({
                     ) : (
                       <>
                         <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                        <span>Rejected {activeState ? `in ${activeState}` : ''}</span>
+                        <span>
+                          {simulationTrace.is_stuck
+                            ? 'Rejected (No path available)'
+                            : `Rejected ${activeState ? `in ${activeState}` : ''}`}
+                        </span>
                       </>
                     )}
                   </div>
