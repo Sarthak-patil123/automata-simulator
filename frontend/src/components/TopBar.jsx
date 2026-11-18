@@ -13,12 +13,14 @@ import {
   ChevronDown,
   Heart,
   Edit3,
+  Sparkles,
 } from 'lucide-react';
 
 export default function TopBar({
   onOpenLanding,
   onOpenBenchmarks,
   onOpenHelp,
+  onOpenGenerator,
   modelType = 'DFA',
   graphData,
   activeBenchmarkTitle = 'Even Parity Checker',
@@ -251,12 +253,24 @@ export default function TopBar({
 
       {/* ── RIGHT: Sponsor & Actions ─────────────────────────────── */}
       <div className="flex items-center gap-2 shrink-0">
+        {onOpenGenerator && (
+          <button
+            onClick={onOpenGenerator}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white shadow-xs text-xs font-bold font-mono transition active:scale-95"
+            title="Open Dynamic Testcase Generator"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
+            <span className="hidden sm:inline">Testcase Generator</span>
+            <span className="sm:hidden">Generator</span>
+          </button>
+        )}
+
         <button
           onClick={onOpenBenchmarks}
           className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-xs font-semibold text-zinc-700 transition"
         >
           <Layers className="w-3.5 h-3.5 text-brand-600" />
-          <span>Examples</span>
+          <span>20 Suites</span>
         </button>
 
         <button

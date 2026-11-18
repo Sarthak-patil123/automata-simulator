@@ -5,6 +5,7 @@ import {
   CheckCircle,
   AlertTriangle,
   Sparkles,
+  Sliders,
   ChevronDown,
   ChevronUp,
   Layers,
@@ -18,6 +19,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { QUICK_SAMPLES } from '../data/benchmarkQuestions';
+import { generateDynamicTestcases } from '../utils/testcaseGenerator';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    LEFT PANEL — Sliding Drawer: Dataset Ingestion + Active Learning (L*)
@@ -33,9 +35,11 @@ export default function LeftPanel({
   onRunSimulation,
   setTestString,
   activeKey: propActiveKey,
+  activeBenchmarkTitle = 'Even number of 0s and even number of 1s',
   isGenerating,
   activeModelType,
   onOpenBenchmarks,
+  onOpenGenerator,
   hitlMode,
   hitlQuery,
   hitlQueryCount,
@@ -54,8 +58,23 @@ export default function LeftPanel({
     QUICK_SAMPLES.ends_with_01 ? 'ends_with_01' : 'ends_with_0'
   );
   const activeKey = propActiveKey || localActiveKey;
+  const [posCount, setPosCount] = useState(14);
+  const [negCount, setNegCount] = useState(6);
+  const [genSuccessMsg, setGenSuccessMsg] = useState(null);
   const [counterexample, setCe] = useState('');
   const [ceError, setCeErr] = useState(null);
+
+  const handleGenerateStrings = () => {
+    const result = generateDynamicTestcases(activeKey || activeBenchmarkTitle, { posCount, negCount }, graphData);
+    setCsvContent(result.csv);
+    setLocalActiveKey(activeKey);
+    onPreprocess(result.csv, true);
+    setGenSuccessMsg(`Generated exactly ${result.positiveCount} positive + ${result.negativeCount} negative strings!`);
+    setTimeout(() => setGenSuccessMsg(null), 4000);
+    if (result.positiveStrings[0] && setTestString) {
+      setTestString(result.positiveStrings[0]);
+    }
+  };
 
   const handleFile = (e) => {
     const file = e.target.files?.[0];
@@ -120,7 +139,145 @@ export default function LeftPanel({
       <div className="flex-1 overflow-y-auto p-4 space-y-5">
         {/* SECTION 1: DATASET INGESTION */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between text-xs font-bold text-zinc-500 font-mono">
+          {/* Dynamic Testcase Generator with Dual Sliders & Ratios */}
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-brand-50/90 via-indigo-50/40 to-purple-50/40 border border-brand-200/90 shadow-xs space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-lg bg-brand-600 text-white flex items-center justify-center shadow-xs">
+                  <Sparkles className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-zinc-900 font-mono flex items-center gap-1.5">
+                    <span>Testcase Generator</span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-brand-100 text-brand-700 font-bold border border-brand-200">
+                      {posCount + negCount} Total
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-zinc-500 font-mono truncate max-w-[170px]" title={activeBenchmarkTitle}>
+                    Suite: <strong className="text-brand-700">{activeBenchmarkTitle || 'Current Suite'}</strong>
+                  </div>
+                </div>
+              </div>
+
+              {onOpenGenerator && (
+                <button
+                  onClick={onOpenGenerator}
+                  className="p-1 rounded-lg hover:bg-brand-100 text-brand-600 transition"
+                  title="Open full testcase generator modal"
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Quick Ratio Pills */}
+            <div className="flex items-center gap-1 pt-0.5">
+              <button
+                type="button"
+                onClick={() => { setPosCount(14); setNegCount(6); setGenSuccessMsg(null); }}
+                className={`flex-1 py-1 px-1.5 rounded-lg text-[10px] font-mono border text-center transition ${
+                  posCount === 14 && negCount === 6
+                    ? 'bg-brand-600 text-white border-brand-600 font-bold shadow-2xs'
+                    : 'bg-white hover:bg-zinc-100 text-zinc-600 border-zinc-200'
+                }`}
+                title="70% Positive / 30% Negative"
+              >
+                70/30 (20)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPosCount(10); setNegCount(10); setGenSuccessMsg(null); }}
+                className={`flex-1 py-1 px-1.5 rounded-lg text-[10px] font-mono border text-center transition ${
+                  posCount === 10 && negCount === 10
+                    ? 'bg-brand-600 text-white border-brand-600 font-bold shadow-2xs'
+                    : 'bg-white hover:bg-zinc-100 text-zinc-600 border-zinc-200'
+                }`}
+                title="50% Positive / 50% Negative"
+              >
+                50/50 (20)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPosCount(6); setNegCount(14); setGenSuccessMsg(null); }}
+                className={`flex-1 py-1 px-1.5 rounded-lg text-[10px] font-mono border text-center transition ${
+                  posCount === 6 && negCount === 14
+                    ? 'bg-brand-600 text-white border-brand-600 font-bold shadow-2xs'
+                    : 'bg-white hover:bg-zinc-100 text-zinc-600 border-zinc-200'
+                }`}
+                title="30% Positive / 70% Negative"
+              >
+                30/70 (20)
+              </button>
+            </div>
+
+            {/* Slider 1: Positives */}
+            <div className="space-y-1 bg-white/95 p-2 rounded-xl border border-teal-200/80">
+              <div className="flex items-center justify-between text-[11px] font-mono">
+                <span className="text-teal-800 font-semibold flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-teal-500" />
+                  Positive ({Math.round((posCount / (posCount + negCount)) * 100)}%):
+                </span>
+                <span className="font-bold text-teal-800 bg-teal-50 px-1.5 py-0.2 rounded border border-teal-200">
+                  {posCount} strings
+                </span>
+              </div>
+              <input
+                type="range"
+                min="2"
+                max="40"
+                step="1"
+                value={posCount}
+                onChange={(e) => {
+                  setPosCount(Number(e.target.value));
+                  setGenSuccessMsg(null);
+                }}
+                className="w-full accent-teal-600 cursor-pointer h-1.5 bg-zinc-200 rounded-lg appearance-none"
+              />
+            </div>
+
+            {/* Slider 2: Negatives */}
+            <div className="space-y-1 bg-white/95 p-2 rounded-xl border border-rose-200/80">
+              <div className="flex items-center justify-between text-[11px] font-mono">
+                <span className="text-rose-800 font-semibold flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-rose-500" />
+                  Negative ({Math.round((negCount / (posCount + negCount)) * 100)}%):
+                </span>
+                <span className="font-bold text-rose-800 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
+                  {negCount} strings
+                </span>
+              </div>
+              <input
+                type="range"
+                min="2"
+                max="40"
+                step="1"
+                value={negCount}
+                onChange={(e) => {
+                  setNegCount(Number(e.target.value));
+                  setGenSuccessMsg(null);
+                }}
+                className="w-full accent-rose-600 cursor-pointer h-1.5 bg-zinc-200 rounded-lg appearance-none"
+              />
+            </div>
+
+            {/* Generate Button */}
+            <button
+              onClick={handleGenerateStrings}
+              disabled={isGenerating}
+              className="w-full py-2 px-3 rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-[0.98] text-white font-mono font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition disabled:opacity-50"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Generate Exactly {posCount}+ / {negCount}-</span>
+            </button>
+
+            {genSuccessMsg && (
+              <div className="text-[10px] font-mono text-teal-800 bg-teal-50 border border-teal-200 rounded-lg p-1.5 text-center font-bold animate-fade-in">
+                {genSuccessMsg}
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between text-xs font-bold text-zinc-500 font-mono pt-1">
             <span className="uppercase tracking-wider text-[10px] flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-brand-600" />
               Dataset Presets

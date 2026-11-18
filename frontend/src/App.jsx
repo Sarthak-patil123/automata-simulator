@@ -7,6 +7,7 @@ import GraphCanvas from './components/GraphCanvas';
 import BottomDock from './components/BottomDock';
 import BenchmarkModal from './components/BenchmarkModal';
 import QuickHelpModal from './components/QuickHelpModal';
+import TestcaseGeneratorModal from './components/TestcaseGeneratorModal';
 import { api } from './services/api';
 import { computeGraphLayout } from './utils/graphLayout';
 import { fireConfetti } from './utils/confetti';
@@ -14,7 +15,7 @@ import { simulateAutomaton } from './utils/simulation';
 import { QUICK_SAMPLES, BENCHMARK_QUESTIONS } from './data/benchmarkQuestions';
 
 export default function App() {
-  const [sessionId] = useState(() => {
+  const [sessionId, setSessionId] = useState(() => {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return crypto.randomUUID();
     }
@@ -66,6 +67,7 @@ export default function App() {
   // Modals & Errors
   const [isBenchmarkModalOpen, setIsBenchmarkModalOpen] = useState(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [isGeneratorModalOpen, setIsGeneratorModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
   // Initial Preprocess & auto warm-start
@@ -73,14 +75,14 @@ export default function App() {
     handlePreprocess(csvContent, true);
   }, []);
 
-  const handlePreprocess = async (text, autoTrain = false) => {
+  const handlePreprocess = async (text, autoTrain = false, overrideType = null) => {
     setIsPreprocessing(true);
     setErrorMsg(null);
     try {
       const data = await api.preprocessCsv(text);
       setPreprocessed(data);
       if (autoTrain && data.is_valid) {
-        trainInitialModel(data, 'dfa');
+        trainInitialModel(data, overrideType || modelType);
       }
     } catch (err) {
       setErrorMsg(err.message || 'Failed to preprocess CSV. Ensure backend is running.');
@@ -92,9 +94,10 @@ export default function App() {
   const trainInitialModel = async (prepData, type) => {
     setIsGenerating(true);
     try {
+      const activeType = type || modelType || 'dfa';
       const data = await api.trainModel({
         sessionId,
-        modelType: type,
+        modelType: activeType,
         positiveStrings: prepData.positive_strings,
         negativeStrings: prepData.negative_strings,
         alphabet: prepData.alphabet,
@@ -417,6 +420,7 @@ export default function App() {
   // Handle Benchmark Select (From Landing page or Modal)
   const handleSelectBenchmark = async (item) => {
     setActiveBenchmarkTitle(item.title);
+    setActivePresetKey(item.slug || `q_${item.id}`);
     setCsvContent(item.csv);
     setCurrentView('simulator');
     setIsGenerating(true);
@@ -477,6 +481,20 @@ export default function App() {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  // Handle Dynamic Testcase Generator Application
+  const handleApplyGeneratedDataset = async (newCsv, info = {}) => {
+    setCsvContent(newCsv);
+    if (info.title) setActiveBenchmarkTitle(info.title);
+    if (info.slug) setActivePresetKey(info.slug);
+    if (info.sampleString) setTestString(info.sampleString);
+
+    const freshSession = 'sess_' + Math.random().toString(36).substring(2, 11);
+    setSessionId(freshSession);
+
+    await handlePreprocess(newCsv, true, modelType);
+    setIsGeneratorModalOpen(false);
   };
 
   // Visual Canvas Actions
@@ -553,6 +571,7 @@ export default function App() {
           <TopBar
             onOpenLanding={() => setCurrentView('landing')}
             onOpenBenchmarks={() => setIsBenchmarkModalOpen(true)}
+            onOpenGenerator={() => setIsGeneratorModalOpen(true)}
             onOpenHelp={() => setIsHelpModalOpen(true)}
             modelType={modelType.toUpperCase()}
             graphData={graphData}
@@ -598,9 +617,11 @@ export default function App() {
                 onRunSimulation={handleRunSimulation}
                 setTestString={setTestString}
                 activeKey={activePresetKey}
+                activeBenchmarkTitle={activeBenchmarkTitle}
                 isGenerating={isGenerating}
                 activeModelType={modelType}
                 onOpenBenchmarks={() => setIsBenchmarkModalOpen(true)}
+                onOpenGenerator={() => setIsGeneratorModalOpen(true)}
                 hitlMode={hitlMode}
                 hitlQuery={hitlQuery}
                 hitlQueryCount={hitlQueryCount}
@@ -671,6 +692,14 @@ export default function App() {
       )}
 
       {/* Modals */}
+      <TestcaseGeneratorModal
+        isOpen={isGeneratorModalOpen}
+        onClose={() => setIsGeneratorModalOpen(false)}
+        activeLanguageTitle={activeBenchmarkTitle}
+        activePresetKey={activePresetKey}
+        onApplyDataset={handleApplyGeneratedDataset}
+        graphData={graphData}
+      />
       <BenchmarkModal
         isOpen={isBenchmarkModalOpen}
         onClose={() => setIsBenchmarkModalOpen(false)}
